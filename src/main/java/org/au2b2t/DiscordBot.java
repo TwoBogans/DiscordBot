@@ -1,11 +1,9 @@
-package org.botexample;
+package org.au2b2t;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-
-import javax.security.auth.login.LoginException;
 
 public class DiscordBot {
     public static void main(String[] args) {
@@ -36,7 +34,7 @@ public class DiscordBot {
 
             // optionally block until JDA is ready
             discordBot.awaitReady();
-        } catch (LoginException | InterruptedException e) {
+        } catch (InterruptedException e) {
             System.err.println("Couldn't login.");
             e.printStackTrace();
         }

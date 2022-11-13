@@ -3,22 +3,19 @@ plugins {
     id 'application'
 }
 
-group 'org.example'
+group 'org.au2b2t'
 version '0.0.1'
 
 application {
-    mainClass.set('org.botexample.DiscordBot')
+    mainClass.set('org.au2b2t.DiscordBot')
 }
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    implementation 'net.dv8tion:JDA:4.2.0_227'
-    implementation 'org.slf4j:slf4j-log4j12:1.7.30'
-}
-
-test {
-    useJUnitPlatform()
+    implementation 'net.dv8tion:JDA:5.0.0-alpha.22'
+    implementation 'org.slf4j:slf4j-log4j12:2.0.3'
 }

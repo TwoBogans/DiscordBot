@@ -1,6 +1,6 @@
-package org.botexample;
+package org.au2b2t;
 
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -18,7 +18,7 @@ public class MessageListener extends ListenerAdapter {
         } else {
             System.out.printf("[%s][%s] %s: %s\n",
                     event.getGuild().getName(),
-                    event.getTextChannel().getName(),
+                    event.getChannel().getName(),
                     event.getMember().getEffectiveName(),
                     event.getMessage().getContentDisplay()
             );
