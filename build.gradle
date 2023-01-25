@@ -1,21 +1,43 @@
 plugins {
     id 'java'
-    id 'application'
+    id 'io.freefair.lombok' version '6.3.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group 'org.au2b2t'
 version '0.0.1'
 
-application {
-    mainClass.set('org.au2b2t.DiscordBot')
-}
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
 dependencies {
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.22'
-    implementation 'org.slf4j:slf4j-log4j12:2.0.3'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
+
+jar {
+    manifest {
+        attributes('Main-Class': 'org.au2b2t.DiscordBot',
+                'Implementation-Title': '2b2tAustralia',
+                'Implementation-Version': version
+        )
+    }
+}
+
+shadowJar {
+    archiveClassifier.set('')
+
+    doLast {
+        copy {
+            from getArchiveFile()
+            into "$rootDir"
+        }
+    }
+
+    dependsOn(jar)
+}
+
+build.dependsOn(shadowJar)

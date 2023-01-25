@@ -1,42 +1,86 @@
 package org.au2b2t;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.au2b2t.api.API;
+import org.au2b2t.commands.EmbedCommand;
+import org.au2b2t.listeners.JoinListener;
+import org.au2b2t.listeners.MessageListener;
+import org.au2b2t.util.Config;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 
 public class DiscordBot {
+
+    @Getter
+    private static JDA jda;
+    @Getter
+    private static API api;
+    @Getter
+    private static Gson gson;
+    @Getter
+    private static Config config;
+
     public static void main(String[] args) {
-        // A token must be provided.
-        if (args.length < 1) {
-            throw new IllegalStateException("You have to provide a token as the first argument!");
-        }
+        gson = new GsonBuilder().setPrettyPrinting().create();
 
-        /* Start the JDA bot builder, letting you provide the token externally rather
-         * than writing it in your program's code. args[0] is the token. */
-        JDABuilder jdaBotBuilder = JDABuilder.createDefault(args[0]);
+        config = loadConfig();
 
-        // Disable parts of the cache
-        jdaBotBuilder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
+        jda = JDABuilder
+                .createDefault(config.getToken())
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .setActivity(Activity.playing("2b2t.au"))
+                .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .build();
 
-        // Enable the bulk delete event - this means you'll have to handle it yourself!
-        jdaBotBuilder.setBulkDeleteSplittingEnabled(false);
+        jda.updateCommands()
+                .addCommands(new EmbedCommand())
+                .queue();
 
-        // Set activity (like "playing Something")
-        jdaBotBuilder.setActivity(Activity.playing("with your heart"));
+        api = new API();
+    }
 
-        // Set event listeners
-        jdaBotBuilder.addEventListeners(new MessageListener(), new ReadyListener());
-
+    public static boolean isUserVerified(@NonNull User user) {
         try {
-            // create the instance of JDA
-            JDA discordBot = jdaBotBuilder.build();
+            var id = user.getIdLong();
+            var response = api.getDiscordRegistered(id);
+            System.out.printf("ID: %s JSON: %s", id, response);
+            return response.isSuccess() && response.isRegistered();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-            // optionally block until JDA is ready
-            discordBot.awaitReady();
-        } catch (InterruptedException e) {
-            System.err.println("Couldn't login.");
-            e.printStackTrace();
+    @SneakyThrows
+    private static Config loadConfig() {
+        var path = Paths.get("config.json");
+        try {
+            Reader reader = Files.newBufferedReader(path);
+
+            Config config = gson.fromJson(reader, Config.class);
+
+            reader.close();
+
+            return config;
+        } catch (IOException e) {
+            var json = gson.toJson(new Config());
+            Files.write(path, Collections.singleton(json));
+            return loadConfig();
         }
     }
 }
