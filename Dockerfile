@@ -6,6 +6,7 @@ COPY gradle ./gradle
 COPY gradlew build.gradle settings.gradle ./
 COPY src ./src
 COPY . .
+RUN chmod +x ./gradlew
 RUN ./gradlew build
 
 CMD ["java", "-jar", "discord-bot-1.0.jar"]
