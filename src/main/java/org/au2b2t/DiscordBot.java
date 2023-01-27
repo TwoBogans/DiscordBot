@@ -11,8 +11,10 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.au2b2t.global.commands.DiscordCommand;
 import org.au2b2t.global.commands.EmbedCommand;
 import org.au2b2t.global.commands.HelpCommand;
+import org.au2b2t.global.listeners.GuildJoinListener;
 import org.au2b2t.global.listeners.PrivateMessageListener;
 import org.au2b2t.util.api.API;
 import org.au2b2t.global.commands.BotInfoCommand;
@@ -54,10 +56,10 @@ public class DiscordBot {
                 .build();
 
         jda.updateCommands()
-                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(), new HelpCommand())
+                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(), new HelpCommand(), new DiscordCommand())
                 .queue();
 
-        jda.addEventListener(new PrivateMessageListener());
+        jda.addEventListener(new PrivateMessageListener(), new GuildJoinListener());
 
         api = new API();
     }
