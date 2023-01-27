@@ -1,4 +1,4 @@
-package org.au2b2t.api.responses;
+package org.au2b2t.util.api.responses;
 
 import com.google.gson.annotations.Expose;
 import lombok.Getter;

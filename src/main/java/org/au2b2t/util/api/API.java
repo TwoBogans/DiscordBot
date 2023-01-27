@@ -1,10 +1,10 @@
-package org.au2b2t.api;
+package org.au2b2t.util.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
-import org.au2b2t.api.responses.DiscordGetUUIDResponse;
-import org.au2b2t.api.responses.DiscordRegisteredResponse;
+import org.au2b2t.util.api.responses.DiscordGetUUIDResponse;
+import org.au2b2t.util.api.responses.DiscordRegisteredResponse;
 
 import java.io.IOException;
 

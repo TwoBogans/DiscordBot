@@ -11,18 +11,17 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.au2b2t.api.API;
-import org.au2b2t.commands.BotInfoCommand;
-import org.au2b2t.commands.EmbedCommand;
-import org.au2b2t.listeners.JoinListener;
-import org.au2b2t.listeners.MessageListener;
+import org.au2b2t.global.commands.EmbedCommand;
+import org.au2b2t.global.commands.HelpCommand;
+import org.au2b2t.global.listeners.PrivateMessageListener;
+import org.au2b2t.util.api.API;
+import org.au2b2t.global.commands.BotInfoCommand;
+import org.au2b2t.local.commands.VerifySetupCommand;
 import org.au2b2t.util.Config;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.UUID;
@@ -55,8 +54,10 @@ public class DiscordBot {
                 .build();
 
         jda.updateCommands()
-                .addCommands(new EmbedCommand(), new BotInfoCommand())
+                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(), new HelpCommand())
                 .queue();
+
+        jda.addEventListener(new PrivateMessageListener());
 
         api = new API();
     }

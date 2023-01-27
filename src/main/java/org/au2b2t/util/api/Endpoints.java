@@ -1,4 +1,4 @@
-package org.au2b2t.api;
+package org.au2b2t.util.api;
 
 public class Endpoints {
     private static final String BASE_URL = "https://discord.2b2t.au/api";

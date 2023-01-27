@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.au2b2t.DiscordBot;
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Util {
@@ -145,6 +147,19 @@ public class Util {
 
     public static String getUptime() {
         return TimeUtil.getRelativeTime(DiscordBot.getStartTime() / 1000, false, false);
+    }
+
+    public static void log(MessageEmbed... embeds) {
+        final var config = DiscordBot.getConfig();
+        final var guild = DiscordBot.getJda().getGuildById(config.getMainGuild()); // 2b2t au
+
+        if (guild == null) return;
+
+        final var logsChannel = guild.getChannelById(TextChannel.class, config.getLogsChannel()); // 2b2tau logs channel
+
+        if (logsChannel == null) return;
+
+        logsChannel.sendMessageEmbeds(Arrays.asList(embeds)).queue();
     }
 
 }
