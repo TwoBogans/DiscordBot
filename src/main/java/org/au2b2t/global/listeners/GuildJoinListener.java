@@ -5,10 +5,12 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.au2b2t.DiscordBot;
 import org.au2b2t.util.Util;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class GuildJoinListener extends ListenerAdapter {
 
@@ -19,15 +21,18 @@ public class GuildJoinListener extends ListenerAdapter {
                 .setColor(2263842)
                 .setTitle("Guild Joined")
                 .setThumbnail(guild.getIconUrl())
-                .setDescription(getFirstInvite(guild))
+//                .setDescription(getFirstInvite(guild))
                 .addField("Guild Name", guild.getName(), true)
                 .addField("Member Count", String.valueOf(guild.getMemberCount()), true)
-                .addField("Boost Count", String.valueOf(guild.getBoostCount()), true)
+//                .addField("Boost Count", String.valueOf(guild.getBoostCount()), true)
 //                .setFooter(getGuildOwner(guild).getAsTag(), getGuildOwner(guild).getAvatarUrl())
                 .setTimestamp(Instant.now())
                 .build();
 
         Util.log(embed);
+
+        System.out.printf("[%s] joined guild.", guild.getName());
+        System.out.printf("[%s] total guilds.", DiscordBot.getJda().getGuilds().stream().map(Guild::getName).collect(Collectors.joining(", ")));
     }
 
     private String getFirstInvite(Guild guild) {
