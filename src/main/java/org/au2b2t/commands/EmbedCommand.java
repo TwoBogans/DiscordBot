@@ -2,7 +2,9 @@ package org.au2b2t.commands;
 
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -16,6 +18,7 @@ import org.au2b2t.DiscordBot;
 import org.au2b2t.util.Util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 
@@ -84,11 +87,17 @@ public class EmbedCommand extends CommandDataImpl {
 
                 // Not Verified
                 if (!verified) {
-                    // TODO SEND IMAGE
-                    event.reply("Do `/verify` in-game")
-//                            .addFiles(FileUpload.fromData(file, "verify"))
-                            .setEphemeral(true)
-                            .queue();
+                    try {
+                        event.reply("Do `/verify` in-game")
+                                .addFiles(FileUpload.fromData(new URL("https://i.imgur.com/muYQcm4.png").openStream(), "verify"))
+                                .setEphemeral(true)
+                                .queue();
+                    } catch (IOException e) {
+                        event.reply("Do `/verify` in-game")
+//                                .addFiles(FileUpload.fromData(new URL("https://i.imgur.com/muYQcm4.png").openStream()))
+                                .setEphemeral(true)
+                                .queue();
+                    }
                     return;
                 }
 
@@ -106,16 +115,24 @@ public class EmbedCommand extends CommandDataImpl {
                         }
 
                         guild.addRoleToMember(member, role).queue();
-                        event.reply("""
-                                    You have successfully been verified.
-                                    
-                                    You can now access:
-                                    - <#912507984062591026>
-                                    - <#832038898497486878>
-                                    - <#810906329425248277>
-                                    """)
+                        event.reply("You have successfully been verified.")
                                 .setEphemeral(true)
                                 .queue();
+
+                        // Send Log
+                        var logsChannel = guild.getChannelById(TextChannel.class, DiscordBot.getConfig().getLogsChannel());
+                        if (logsChannel != null) {
+                            var uuid = DiscordBot.getUserMinecraftUUID(user);
+                            var embed = new EmbedBuilder()
+                                    .setColor(2263842)
+                                    .setThumbnail("https://minotar.net/avatar/%s/100.png".formatted(uuid))
+                                    .setTitle("Verified Player", "https://namemc.com/search?q=%s".formatted(uuid))
+                                    .addField("Discord User", user.getAsTag(), false)
+                                    .addField("Minecraft UUID", uuid.toString(), false)
+                                    .setFooter("Discord ID: %s", user.getId())
+                                    .build();
+                            logsChannel.sendMessageEmbeds(embed).queue();
+                        }
                     });
                 }
             }

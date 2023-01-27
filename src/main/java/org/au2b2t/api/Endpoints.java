@@ -6,6 +6,6 @@ public class Endpoints {
     public static final String MINECRAFT = BASE_URL.concat("/minecraft");
     public static final String DISCORD_REGISTERED = DISCORD.concat("/isregistered?id=%s");
     public static final String DISCORD_GET_UUID = DISCORD.concat("/getuuid?id=%s");
-    public static final String MINECRAFT_REGISTERED = DISCORD.concat("/isregistered?uuid=%s");
-    public static final String MINECRAFT_GET_ID = DISCORD.concat("/getid?uuid=%s");
+    public static final String MINECRAFT_REGISTERED = MINECRAFT.concat("/isregistered?uuid=%s");
+    public static final String MINECRAFT_GET_ID = MINECRAFT.concat("/getid?uuid=%s");
 }

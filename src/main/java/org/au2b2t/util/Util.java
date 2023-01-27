@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.au2b2t.DiscordBot;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -140,6 +141,10 @@ public class Util {
                 reader.close();
             }
         }
+    }
+
+    public static String getUptime() {
+        return TimeUtil.getRelativeTime(DiscordBot.getStartTime() / 1000, false, false);
     }
 
 }

@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.au2b2t.api.API;
+import org.au2b2t.commands.BotInfoCommand;
 import org.au2b2t.commands.EmbedCommand;
 import org.au2b2t.listeners.JoinListener;
 import org.au2b2t.listeners.MessageListener;
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.UUID;
 
 public class DiscordBot {
 
@@ -35,8 +37,12 @@ public class DiscordBot {
     private static Gson gson;
     @Getter
     private static Config config;
+    @Getter
+    private static long startTime;
 
     public static void main(String[] args) {
+        startTime = System.currentTimeMillis();
+
         gson = new GsonBuilder().setPrettyPrinting().create();
 
         config = loadConfig();
@@ -49,7 +55,7 @@ public class DiscordBot {
                 .build();
 
         jda.updateCommands()
-                .addCommands(new EmbedCommand())
+                .addCommands(new EmbedCommand(), new BotInfoCommand())
                 .queue();
 
         api = new API();
@@ -63,6 +69,18 @@ public class DiscordBot {
             return response.isSuccess() && response.isRegistered();
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public static UUID getUserMinecraftUUID(@NonNull User user) {
+        try {
+            var id = user.getIdLong();
+            var response = api.getDiscordUUID(id);
+            System.out.printf("ID: %s JSON: %s", id, response);
+            if (!response.isSuccess()) return new UUID(0L, 0L);
+            return UUID.fromString(response.getUuid());
+        } catch (Exception e) {
+            return new UUID(0L, 0L);
         }
     }
 
