@@ -86,7 +86,7 @@ public class EmbedCommand extends CommandDataImpl {
                 if (guild == null) throw new NullPointerException();
 
                 // Not Verified
-                if (!verified) {
+                if (true /*!verified*/) {
                     try {
                         event.reply("Do `/verify` in-game")
                                 .addFiles(FileUpload.fromData(new URL("https://i.imgur.com/muYQcm4.png").openStream(), "verify"))
