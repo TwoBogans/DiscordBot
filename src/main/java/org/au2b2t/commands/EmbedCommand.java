@@ -86,18 +86,10 @@ public class EmbedCommand extends CommandDataImpl {
                 if (guild == null) throw new NullPointerException();
 
                 // Not Verified
-                if (true /*!verified*/) {
-                    try {
-                        event.reply("Do `/verify` in-game")
-                                .addFiles(FileUpload.fromData(new URL("https://i.imgur.com/muYQcm4.png").openStream(), "verify"))
-                                .setEphemeral(true)
-                                .queue();
-                    } catch (IOException e) {
-                        event.reply("Do `/verify` in-game")
-//                                .addFiles(FileUpload.fromData(new URL("https://i.imgur.com/muYQcm4.png").openStream()))
-                                .setEphemeral(true)
-                                .queue();
-                    }
+                if (!verified) {
+                    event.reply("Do `/verify` in-game")
+                            .setEphemeral(true)
+                            .queue();
                     return;
                 }
 
