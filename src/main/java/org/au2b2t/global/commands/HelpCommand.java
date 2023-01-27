@@ -20,18 +20,32 @@ public class HelpCommand extends CommandDataImpl {
         public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
             if (event.getName().equalsIgnoreCase("help")) {
                 final var avatarUrl = "https://imgur.com/v05uTf1.gif";
+                // TODO Make Automatically Generate Message
                 final var embed = new EmbedBuilder()
                         .setColor(2263842)
                         .setTitle("Information & Commands")
                         .setDescription("\uD83D\uDCE8 admin@2b2t.au\n" + "\uD83D\uDD17 https://2b2t.au/")
-                        .addField("Player", "```%s```", true)
-                        .addField("Admin", "```%s```", true)
-                        .addField("Secret", "```%s```", true)
+                        .addField("Player", """
+                                ```
+                                /botinfo
+                                /help
+                                ```
+                                """, true)
+                        .addField("Admin", """
+                                ```
+                                /embed
+                                ```
+                                """, true)
+                        .addField("Secret", """
+                                ```
+                                [REDACTED]
+                                ```
+                                """, true)
                         .setFooter("Australian Hausemaster", avatarUrl)
                         .setTimestamp(Instant.now())
                         .build();
 
-                event.reply("You need help!")
+                event.replyEmbeds(embed)
                         .setEphemeral(true)
                         .queue();
             }

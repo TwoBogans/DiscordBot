@@ -40,6 +40,7 @@ public class BotInfoCommand extends CommandDataImpl {
                         .build();
 
                 event.replyEmbeds(embed)
+                        .setEphemeral(true)
                         .queue();
             }
         }
