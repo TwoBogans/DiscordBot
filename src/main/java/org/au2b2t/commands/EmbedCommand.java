@@ -129,7 +129,7 @@ public class EmbedCommand extends CommandDataImpl {
                                     .setTitle("Verified Player", "https://namemc.com/search?q=%s".formatted(uuid))
                                     .addField("Discord User", user.getAsTag(), false)
                                     .addField("Minecraft UUID", uuid.toString(), false)
-                                    .setFooter("Discord ID: %s", user.getId())
+                                    .setFooter("Discord ID: %s".formatted(user.getId()))
                                     .build();
                             logsChannel.sendMessageEmbeds(embed).queue();
                         }
