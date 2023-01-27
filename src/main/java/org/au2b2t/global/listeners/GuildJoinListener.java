@@ -23,7 +23,7 @@ public class GuildJoinListener extends ListenerAdapter {
                 .addField("Guild Name", guild.getName(), true)
                 .addField("Member Count", String.valueOf(guild.getMemberCount()), true)
                 .addField("Boost Count", String.valueOf(guild.getBoostCount()), true)
-                .setFooter(getGuildOwner(guild).getAsTag(), getGuildOwner(guild).getAvatarUrl())
+//                .setFooter(getGuildOwner(guild).getAsTag(), getGuildOwner(guild).getAvatarUrl())
                 .setTimestamp(Instant.now())
                 .build();
 
