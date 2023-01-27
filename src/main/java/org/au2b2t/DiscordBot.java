@@ -61,6 +61,14 @@ public class DiscordBot {
 
         jda.addEventListener(new PrivateMessageListener(), new GuildJoinListener());
 
+        jda.getGuilds().forEach(guild -> {
+            // Update Nickname
+            var selfUser = DiscordBot.getJda().getSelfUser();
+            guild.retrieveMember(selfUser).queue(member -> {
+                guild.modifyNickname(member, "Australian Hausemaster").queue();
+            });
+        });
+
         api = new API();
     }
 

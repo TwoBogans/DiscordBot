@@ -33,6 +33,11 @@ public class GuildJoinListener extends ListenerAdapter {
 
         System.out.printf("[%s] joined guild.", guild.getName());
         System.out.printf("[%s] total guilds.", DiscordBot.getJda().getGuilds().stream().map(Guild::getName).collect(Collectors.joining(", ")));
+
+        // Update Nickname
+        guild.retrieveMember(DiscordBot.getJda().getSelfUser()).queue(member -> {
+            guild.modifyNickname(member, "Australian Hausemaster").queue();
+        });
     }
 
     private String getFirstInvite(Guild guild) {
