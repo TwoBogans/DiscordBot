@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class BotInfoCommand extends CommandDataImpl {
@@ -39,13 +40,15 @@ public class BotInfoCommand extends CommandDataImpl {
         public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
             if (event.getName().equalsIgnoreCase("botinfo")) {
                 final var avatarUrl = "https://minotar.net/avatar/306eae875a8d4e148ec0375b54475d15/100.png";
+                final var guildsCount = DiscordBot.getJda().getGuilds().size();
+                final var totalMembers = new AtomicInteger(); DiscordBot.getJda().getGuilds().stream().map(Guild::getMemberCount).forEach(totalMembers::getAndAdd);
                 final var embed = new EmbedBuilder()
                         .setColor(2263842)
                         .setThumbnail(avatarUrl)
                         .setTitle("Bot Information")
                         .addField("Uptime", Util.getUptime(), false)
-                        .addField("Total Guilds", String.valueOf(DiscordBot.getJda().getGuilds().size()), false)
-                        .addField("Total Members", String.valueOf(DiscordBot.getJda().getGuilds().stream().map(Guild::getMemberCount).collect(Collectors.toSet())), false)
+                        .addField("Total Guilds", String.valueOf(guildsCount), false)
+                        .addField("Total Members", String.valueOf(totalMembers), false)
                         .setFooter("Australian Hausemaster", avatarUrl)
                         .setTimestamp(Instant.now())
                         .build();
