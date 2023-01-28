@@ -40,7 +40,7 @@ public class LiveChatListener extends ListenerAdapter {
 
                     if (messages == null) {
                         messages = Set.copyOf(now.getMessages());
-                        return;
+                        continue;
                     }
 
                     Set<String> lM, nM, dM;
@@ -54,8 +54,9 @@ public class LiveChatListener extends ListenerAdapter {
                         dM = Sets.difference(lM, nM);
                     }
 
-                    if (i.get() >= 60) {
-                        dM.forEach(message -> channel.sendMessage(message).queue());
+                    if (i.get() >= 20) {
+                        if (dM.isEmpty()) nM.forEach(message -> channel.sendMessage(message).queue());
+                        else dM.forEach(message -> channel.sendMessage(message).queue());
                     }
                 } catch (Exception e) {
                     break;
