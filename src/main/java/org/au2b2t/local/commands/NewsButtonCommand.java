@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import org.au2b2t.DiscordBot;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class NewsButtonCommand extends CommandDataImpl {
@@ -42,7 +43,7 @@ public class NewsButtonCommand extends CommandDataImpl {
                         event.getChannel()
                                 .retrieveMessageById(option.getAsString())
                                 .queue(message -> {
-                                    var currentComponents = message.getComponents();
+                                    var currentComponents = new ArrayList<>(message.getComponents());
                                     currentComponents.add(ActionRow.of(newsButton));
                                     message.editMessageComponents(currentComponents).queue(success -> {
                                         event.reply("News Button Sucessfully Added!")
