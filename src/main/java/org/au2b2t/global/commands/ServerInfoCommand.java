@@ -36,6 +36,7 @@ public class ServerInfoCommand extends CommandDataImpl {
                                     stats.getUptime()))
                             .queue();
                 } catch (Exception e) {
+                    e.printStackTrace();
                     event.reply("Server is offline! :/")
                             .queue();
                 }
