@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.au2b2t.global.commands.*;
 import org.au2b2t.global.listeners.GuildJoinListener;
-import org.au2b2t.global.listeners.PrivateMessageListener;
+import org.au2b2t.global.listeners.MessageListener;
 import org.au2b2t.local.commands.NewsButtonCommand;
 import org.au2b2t.local.commands.VerifySetupCommand;
 import org.au2b2t.util.Config;
@@ -58,7 +58,7 @@ public class DiscordBot {
                         new ServerInfoCommand(), new SetupLiveChatCommand(), new NewsButtonCommand())
                 .queue();
 
-        jda.addEventListener(new PrivateMessageListener(), new GuildJoinListener());
+        jda.addEventListener(new MessageListener(), new GuildJoinListener());
 
         jda.getGuilds().forEach(guild -> {
             // Update Nickname

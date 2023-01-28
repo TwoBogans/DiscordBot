@@ -44,7 +44,9 @@ public class NewsButtonCommand extends CommandDataImpl {
                                 .retrieveMessageById(option.getAsString())
                                 .queue(message -> {
                                     var currentComponents = new ArrayList<>(message.getComponents());
-                                    currentComponents.add(ActionRow.of(newsButton));
+                                    currentComponents.stream().filter(itemComponents -> itemComponents instanceof ActionRow)
+                                            .findFirst().ifPresent(item -> item.getButtons().add(newsButton));
+//                                    currentComponents.add(ActionRow.of(newsButton));
                                     message.editMessageComponents(currentComponents).queue(success -> {
                                         event.reply("News Button Sucessfully Added!")
                                                 .setEphemeral(true)

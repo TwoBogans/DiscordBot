@@ -5,10 +5,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.au2b2t.DiscordBot;
@@ -17,10 +19,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Util {
 
@@ -185,6 +184,12 @@ public class Util {
         } catch (Exception e) {
             return new UUID(0L, 0L);
         }
+    }
+
+    public static Emoji randomEmojiFromGuild(@NonNull Guild guild) {
+        final var random = new Random();
+        final var emojiList = guild.getEmojis();
+        return emojiList.get(random.nextInt(emojiList.size()));
     }
 
 }
