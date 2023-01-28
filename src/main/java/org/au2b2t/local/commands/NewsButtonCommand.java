@@ -41,12 +41,15 @@ public class NewsButtonCommand extends CommandDataImpl {
                         final var newsButton = Button.primary("news", "News").withEmoji(Emoji.fromFormatted("\uD83D\uDDDE️"));
                         event.getChannel()
                                 .retrieveMessageById(option.getAsString())
-                                .queue(message -> message.editMessageComponents(ActionRow.of(newsButton))
-                                .queue(success -> {
-                                    event.reply("News Button Sucessfully Added!")
-                                            .setEphemeral(true)
-                                            .queue();
-                                }));
+                                .queue(message -> {
+                                    var currentComponents = message.getComponents();
+                                    currentComponents.add(ActionRow.of(newsButton));
+                                    message.editMessageComponents(currentComponents).queue(success -> {
+                                        event.reply("News Button Sucessfully Added!")
+                                                .setEphemeral(true)
+                                                .queue();
+                                    });
+                                });
                         return;
                     } catch (Exception e) {
                         event.reply(String.format("Failed with exception:%n%n%s", e.getMessage()))
