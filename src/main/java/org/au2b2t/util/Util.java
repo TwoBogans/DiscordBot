@@ -3,9 +3,11 @@ package org.au2b2t.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -18,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Util {
 
@@ -160,6 +163,28 @@ public class Util {
         if (logsChannel == null) return;
 
         logsChannel.sendMessageEmbeds(Arrays.asList(embeds)).queue();
+    }
+
+    public static boolean isUserVerified(@NonNull User user) {
+        try {
+            var id = user.getIdLong();
+            var response = DiscordBot.getApi().getDiscordRegistered(id);
+            System.out.printf("ID: %s JSON: %s", id, response);
+            return response.isSuccess() && response.isRegistered();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static UUID getUserMinecraftUUID(@NonNull User user) {
+        try {
+            var id = user.getIdLong();
+            var response = DiscordBot.getApi().getDiscordUUID(id);
+            if (!response.isSuccess()) return new UUID(0L, 0L);
+            return UUID.fromString(response.getUuid());
+        } catch (Exception e) {
+            return new UUID(0L, 0L);
+        }
     }
 
 }

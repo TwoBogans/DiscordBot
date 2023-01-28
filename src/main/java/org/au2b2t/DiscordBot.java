@@ -1,20 +1,18 @@
 package org.au2b2t;
 
+import au.twobbeetwotee.api.API;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.au2b2t.global.commands.*;
 import org.au2b2t.global.listeners.GuildJoinListener;
 import org.au2b2t.global.listeners.PrivateMessageListener;
-import org.au2b2t.util.api.API;
 import org.au2b2t.local.commands.VerifySetupCommand;
 import org.au2b2t.util.Config;
 
@@ -23,7 +21,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.UUID;
 
 public class DiscordBot {
 
@@ -31,8 +28,6 @@ public class DiscordBot {
     private static JDA jda;
     @Getter
     private static API api;
-    @Getter
-    private static au.twobbeetwotee.api.API auApi;
     @Getter
     private static Gson gson;
     @Getter
@@ -47,6 +42,8 @@ public class DiscordBot {
 
         config = loadConfig();
 
+        api = new API();
+
         jda = JDABuilder
                 .createDefault(config.getToken())
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
@@ -55,7 +52,9 @@ public class DiscordBot {
                 .build();
 
         jda.updateCommands()
-                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(), new HelpCommand(), new DiscordCommand(), new LockdownCommand(), new ServerInfoCommand())
+                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(),
+                        new HelpCommand(), new DiscordCommand(), new LockdownCommand(),
+                        new ServerInfoCommand(), new SetupLiveChatCommand())
                 .queue();
 
         jda.addEventListener(new PrivateMessageListener(), new GuildJoinListener());
@@ -67,33 +66,6 @@ public class DiscordBot {
                 guild.modifyNickname(member, "Australian Hausemaster").queue();
             });
         });
-
-        api = new API();
-
-        auApi = new au.twobbeetwotee.api.API();
-    }
-
-    public static boolean isUserVerified(@NonNull User user) {
-        try {
-            var id = user.getIdLong();
-            var response = api.getDiscordRegistered(id);
-            System.out.printf("ID: %s JSON: %s", id, response);
-            return response.isSuccess() && response.isRegistered();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static UUID getUserMinecraftUUID(@NonNull User user) {
-        try {
-            var id = user.getIdLong();
-            var response = api.getDiscordUUID(id);
-            System.out.printf("ID: %s JSON: %s", id, response);
-            if (!response.isSuccess()) return new UUID(0L, 0L);
-            return UUID.fromString(response.getUuid());
-        } catch (Exception e) {
-            return new UUID(0L, 0L);
-        }
     }
 
     @SneakyThrows
