@@ -69,6 +69,8 @@ public class DiscordBot {
         });
 
         api = new API();
+
+        auApi = new au.twobbeetwotee.api.API();
     }
 
     public static boolean isUserVerified(@NonNull User user) {
