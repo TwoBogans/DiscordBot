@@ -11,13 +11,10 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.au2b2t.global.commands.DiscordCommand;
-import org.au2b2t.global.commands.EmbedCommand;
-import org.au2b2t.global.commands.HelpCommand;
+import org.au2b2t.global.commands.*;
 import org.au2b2t.global.listeners.GuildJoinListener;
 import org.au2b2t.global.listeners.PrivateMessageListener;
 import org.au2b2t.util.api.API;
-import org.au2b2t.global.commands.BotInfoCommand;
 import org.au2b2t.local.commands.VerifySetupCommand;
 import org.au2b2t.util.Config;
 
@@ -34,6 +31,8 @@ public class DiscordBot {
     private static JDA jda;
     @Getter
     private static API api;
+    @Getter
+    private static au.twobbeetwotee.api.API auApi;
     @Getter
     private static Gson gson;
     @Getter
@@ -56,7 +55,7 @@ public class DiscordBot {
                 .build();
 
         jda.updateCommands()
-                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(), new HelpCommand(), new DiscordCommand())
+                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(), new HelpCommand(), new DiscordCommand(), new LockdownCommand(), new ServerInfoCommand())
                 .queue();
 
         jda.addEventListener(new PrivateMessageListener(), new GuildJoinListener());
