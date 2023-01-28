@@ -1,6 +1,10 @@
-package org.au2b2t;
+package au.twobeetwotee.discord;
 
 import au.twobbeetwotee.api.API;
+import au.twobeetwotee.discord.command.CommandManager;
+import au.twobeetwotee.discord.listener.global.GuildJoinListener;
+import au.twobeetwotee.discord.listener.global.MessageListener;
+import au.twobeetwotee.discord.util.Config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
@@ -10,12 +14,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.au2b2t.global.commands.*;
-import org.au2b2t.global.listeners.GuildJoinListener;
-import org.au2b2t.global.listeners.MessageListener;
-import org.au2b2t.local.commands.NewsButtonCommand;
-import org.au2b2t.local.commands.VerifySetupCommand;
-import org.au2b2t.util.Config;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,7 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-public class DiscordBot {
+public class Main {
 
     @Getter
     private static JDA jda;
@@ -33,6 +31,8 @@ public class DiscordBot {
     private static Gson gson;
     @Getter
     private static Config config;
+    @Getter
+    private static CommandManager commandManager;
     @Getter
     private static long startTime;
 
@@ -52,21 +52,20 @@ public class DiscordBot {
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .build();
 
+        commandManager = new CommandManager();
+
         jda.updateCommands()
-                .addCommands(new VerifySetupCommand(), new BotInfoCommand(), new EmbedCommand(),
-                        new HelpCommand(), new DiscordCommand(), new LockdownCommand(),
-                        new ServerInfoCommand(), new SetupLiveChatCommand(), new NewsButtonCommand())
+                .addCommands(commandManager.getCommands())
                 .queue();
 
         jda.addEventListener(new MessageListener(), new GuildJoinListener());
 
-        jda.getGuilds().forEach(guild -> {
-            // Update Nickname
-            var selfUser = DiscordBot.getJda().getSelfUser();
-            guild.retrieveMember(selfUser).queue(member -> {
-                guild.modifyNickname(member, "Australian Hausemaster").queue();
-            });
-        });
+        // Update Nickname
+        // TODO Fix?
+        jda.getGuilds()
+                .forEach(guild -> guild.retrieveMember(Main.getJda().getSelfUser())
+                        .queue(member -> guild.modifyNickname(member, "Australian Hausemaster")
+                                .queue()));
     }
 
     @SneakyThrows

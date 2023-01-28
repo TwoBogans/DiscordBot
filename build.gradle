@@ -4,8 +4,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-group 'org.au2b2t'
-version '0.0.1'
+group 'au.twobeetwotee'
+version '2.0'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
@@ -18,12 +18,13 @@ dependencies {
     implementation 'net.dv8tion:JDA:5.0.0-beta.3'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.reflections:reflections:0.10.2'
     implementation 'com.github.2b2tAustralia:ServerAPI-SDK:b19a985a5b'
 }
 
 jar {
     manifest {
-        attributes('Main-Class': 'org.au2b2t.DiscordBot',
+        attributes('Main-Class': 'au.twobeetwotee.discord.Main',
                 'Implementation-Title': '2b2tAustralia',
                 'Implementation-Version': version
         )

@@ -1,10 +1,10 @@
-package org.au2b2t.local.listeners;
+package au.twobeetwotee.discord.listener.main;
 
+import au.twobeetwotee.discord.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.au2b2t.DiscordBot;
-import org.au2b2t.util.Util;
+import au.twobeetwotee.discord.util.Util;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class VerifyPlayerListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getComponentId().equalsIgnoreCase("verify")) {
-            if (Objects.requireNonNull(event.getGuild()).getIdLong() != DiscordBot.getConfig().getMainGuild()) {
+            if (Objects.requireNonNull(event.getGuild()).getIdLong() != Main.getConfig().getMainGuild()) {
                 event.reply("discord.gg/popbob only!")
                         .setEphemeral(true)
                         .queue();
@@ -36,7 +36,7 @@ public class VerifyPlayerListener extends ListenerAdapter {
             }
 
             // User Role
-            final var role = guild.getRoleById(DiscordBot.getConfig().getUserRole());
+            final var role = guild.getRoleById(Main.getConfig().getUserRole());
 
             // Check Existence
             if (role != null) {

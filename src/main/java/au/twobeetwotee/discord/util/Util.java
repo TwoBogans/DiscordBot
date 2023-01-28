@@ -1,5 +1,6 @@
-package org.au2b2t.util;
+package au.twobeetwotee.discord.util;
 
+import au.twobeetwotee.discord.Main;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -13,11 +14,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.au2b2t.DiscordBot;
 
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
@@ -148,12 +150,12 @@ public class Util {
     }
 
     public static String getUptime() {
-        return TimeUtil.getRelativeTime(DiscordBot.getStartTime() / 1000, false, false);
+        return TimeUtil.getRelativeTime(Main.getStartTime() / 1000, false, false);
     }
 
     public static void log(MessageEmbed... embeds) {
-        final var config = DiscordBot.getConfig();
-        final var guild = DiscordBot.getJda().getGuildById(config.getMainGuild()); // 2b2t au
+        final var config = Main.getConfig();
+        final var guild = Main.getJda().getGuildById(config.getMainGuild()); // 2b2t au
 
         if (guild == null) return;
 
@@ -167,7 +169,7 @@ public class Util {
     public static boolean isUserVerified(@NonNull User user) {
         try {
             var id = user.getIdLong();
-            var response = DiscordBot.getApi().getDiscordRegistered(id);
+            var response = Main.getApi().getDiscordRegistered(id);
             System.out.printf("ID: %s JSON: %s", id, response);
             return response.isSuccess() && response.isRegistered();
         } catch (Exception e) {
@@ -178,7 +180,7 @@ public class Util {
     public static UUID getUserMinecraftUUID(@NonNull User user) {
         try {
             var id = user.getIdLong();
-            var response = DiscordBot.getApi().getDiscordUUID(id);
+            var response = Main.getApi().getDiscordUUID(id);
             if (!response.isSuccess()) return new UUID(0L, 0L);
             return UUID.fromString(response.getUuid());
         } catch (Exception e) {
@@ -186,10 +188,37 @@ public class Util {
         }
     }
 
-    public static Emoji randomEmojiFromGuild(@NonNull Guild guild) {
+    public static Emoji randomEmojiFromGuild(@NonNull Guild guild, Boolean animatedOnly) {
         final var random = new Random();
-        final var emojiList = guild.getEmojis();
+        final var emojiList = guild.getEmojis().stream().filter(richCustomEmoji -> animatedOnly && richCustomEmoji.isAnimated()).toList();
         return emojiList.get(random.nextInt(emojiList.size()));
+    }
+
+    /**
+     * Creates new instance of a class by calling a constructor that receives ctorClassArgs arguments.
+     *
+     * @link <a href="https://github.com/Alluxio/alluxio/blob/master/core/common/src/main/java/alluxio/util/CommonUtils.java#L279">...</a>
+     * @param <T> type of the object
+     * @param cls the class to create
+     * @param ctorClassArgs parameters type list of the constructor to initiate, if null default
+     *        constructor will be called
+     * @param ctorArgs the arguments to pass the constructor
+     * @return new class object
+     * @throws RuntimeException if the class cannot be instantiated
+     */
+    public static <T> T createNewClassInstance(Class<T> cls, Class<?>[] ctorClassArgs,
+                                               Object[] ctorArgs) {
+        try {
+            if (ctorClassArgs == null) {
+                return cls.newInstance();
+            }
+            Constructor<T> ctor = cls.getConstructor(ctorClassArgs);
+            return ctor.newInstance(ctorArgs);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getCause());
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

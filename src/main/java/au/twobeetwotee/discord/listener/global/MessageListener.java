@@ -1,11 +1,11 @@
-package org.au2b2t.global.listeners;
+package au.twobeetwotee.discord.listener.global;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.au2b2t.DiscordBot;
-import org.au2b2t.util.Util;
+import au.twobeetwotee.discord.Main;
+import au.twobeetwotee.discord.util.Util;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -14,12 +14,10 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        /**
-         * 2b2t Au Booster Channel
-         */
-        if (event.getChannel().getIdLong() == DiscordBot.getConfig().getBoosterChannel() &&
-                Objects.requireNonNull(event.getGuild()).getIdLong() == DiscordBot.getConfig().getMainGuild()) {
-            event.getMessage().addReaction(Util.randomEmojiFromGuild(event.getGuild())).queue(); // Add Random Emojiy
+        /* Boosters Channel - 2b2t Australia Only */
+        if (event.getChannel().getIdLong() == Main.getConfig().getBoosterChannel() &&
+                Objects.requireNonNull(event.getGuild()).getIdLong() == Main.getConfig().getMainGuild()) {
+            event.getMessage().addReaction(Util.randomEmojiFromGuild(event.getGuild(), true)).queue(); // Add Random Emoji
             return;
         }
 

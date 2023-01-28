@@ -1,12 +1,12 @@
-package org.au2b2t.global.listeners;
+package au.twobeetwotee.discord.listener.global;
 
+import au.twobeetwotee.discord.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.au2b2t.DiscordBot;
-import org.au2b2t.util.Util;
+import au.twobeetwotee.discord.util.Util;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,10 +32,10 @@ public class GuildJoinListener extends ListenerAdapter {
         Util.log(embed);
 
         System.out.printf("[%s] joined guild.", guild.getName());
-        System.out.printf("[%s] total guilds.", DiscordBot.getJda().getGuilds().stream().map(Guild::getName).collect(Collectors.joining(", ")));
+        System.out.printf("[%s] total guilds.", Main.getJda().getGuilds().stream().map(Guild::getName).collect(Collectors.joining(", ")));
 
         // Update Nickname
-        guild.retrieveMember(DiscordBot.getJda().getSelfUser()).queue(member -> {
+        guild.retrieveMember(Main.getJda().getSelfUser()).queue(member -> {
             guild.modifyNickname(member, "Australian Hausemaster").queue();
         });
     }

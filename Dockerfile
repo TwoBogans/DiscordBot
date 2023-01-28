@@ -9,4 +9,4 @@ COPY . .
 RUN chmod +x ./gradlew
 RUN ./gradlew build
 
-CMD ["java", "-jar", "discord-bot-0.0.1.jar"]
+CMD ["java", "-jar", "discord-bot-2.0.jar"]

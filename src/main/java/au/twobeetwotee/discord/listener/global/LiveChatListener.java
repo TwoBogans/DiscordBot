@@ -1,4 +1,4 @@
-package org.au2b2t.global.listeners;
+package au.twobeetwotee.discord.listener.global;
 
 import com.google.common.collect.Sets;
 import lombok.NonNull;
@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.au2b2t.DiscordBot;
+import au.twobeetwotee.discord.Main;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,7 +44,7 @@ public class LiveChatListener extends ListenerAdapter {
         try {
             i.incrementAndGet();
 
-            var now = DiscordBot.getApi().getChat();
+            var now = Main.getApi().getChat();
 
             if (messages == null) {
                 messages = Set.copyOf(now.getMessages());

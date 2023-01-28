@@ -1,4 +1,4 @@
-package org.au2b2t.util;
+package au.twobeetwotee.discord.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
