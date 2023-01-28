@@ -32,35 +32,34 @@ public class LiveChatListener extends ListenerAdapter {
     public void startThread() {
         final var i = new AtomicInteger();
         final var t = new Thread(() -> {
-            while (true) {
-                try {
-                    i.incrementAndGet();
+            try {
+                i.incrementAndGet();
 
-                    var now = DiscordBot.getApi().getChat();
+                var now = DiscordBot.getApi().getChat();
 
-                    if (messages == null) {
-                        messages = Set.copyOf(now.getMessages());
-                        continue;
-                    }
-
-                    Set<String> lM, nM, dM;
-
-                    { // logic level 1: current state
-                        lM = messages;
-                        nM = Set.copyOf(now.getMessages());
-                    }
-
-                    { // logic level 2: get difference
-                        dM = Sets.difference(lM, nM);
-                    }
-
-                    if (i.get() >= 20) {
-                        if (dM.isEmpty()) nM.forEach(message -> channel.sendMessage(message).queue());
-                        else dM.forEach(message -> channel.sendMessage(message).queue());
-                    }
-                } catch (Exception e) {
-                    break;
+                if (messages == null) {
+                    messages = Set.copyOf(now.getMessages());
+                    return;
                 }
+
+                Set<String> lM, nM, dM;
+
+                { // logic level 1: current state
+                    lM = messages;
+                    nM = Set.copyOf(now.getMessages());
+                }
+
+                { // logic level 2: get difference
+                    dM = Sets.difference(lM, nM);
+                }
+
+                if (i.get() >= 20) {
+                    if (dM.isEmpty()) nM.forEach(message -> channel.sendMessage(message).queue());
+                    else dM.forEach(message -> channel.sendMessage(message).queue());
+                    System.out.printf("List: %s %s %s %s", lM.size(), nM.size(), dM.size(), dM);
+                }
+            } catch (Exception e) {
+
             }
         });
         t.setDaemon(true);
