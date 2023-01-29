@@ -1,11 +1,10 @@
 package au.twobeetwotee.discord.listener.global;
 
-import net.dv8tion.jda.api.EmbedBuilder;
+import au.twobeetwotee.discord.Main;
+import au.twobeetwotee.discord.util.Util;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import au.twobeetwotee.discord.Main;
-import au.twobeetwotee.discord.util.Util;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -30,12 +29,12 @@ public class MessageListener extends ListenerAdapter {
                     event.getMessage().getContentDisplay()
             );
 
-            final var embed = new EmbedBuilder()
-                    .setColor(2263842)
-                    .setTitle("PM Received")
-                    .setDescription(event.getMessage().getContentDisplay())
-                    .setFooter(event.getAuthor().getAsTag(), event.getAuthor().getAvatarUrl())
-                    .setTimestamp(Instant.now())
+            final var embed = Util.defaultBuilder()
+                    .setTitle("Private Message Received")
+                    .setAuthor(event.getAuthor().getAsTag(), event.getAuthor().getAvatarUrl())
+                    .setDescription(String.format("%s: %s",
+                            event.getAuthor().getAsTag(),
+                            event.getMessage().getContentDisplay()))
                     .build();
 
             Util.log(embed);

@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.*;
 
 public class Util {
@@ -147,6 +148,13 @@ public class Util {
                 reader.close();
             }
         }
+    }
+
+    public static EmbedBuilder defaultBuilder() {
+        return new EmbedBuilder()
+                .setColor(2263842)
+                .setFooter("Australian Hausemaster", "https://imgur.com/v05uTf1.gif")
+                .setTimestamp(Instant.now());
     }
 
     public static String getUptime() {

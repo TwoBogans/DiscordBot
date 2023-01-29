@@ -1,10 +1,9 @@
 package au.twobeetwotee.discord.listener.main;
 
 import au.twobeetwotee.discord.Main;
-import net.dv8tion.jda.api.EmbedBuilder;
+import au.twobeetwotee.discord.util.Util;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import au.twobeetwotee.discord.util.Util;
 
 import java.util.Objects;
 
@@ -55,13 +54,13 @@ public class VerifyPlayerListener extends ListenerAdapter {
 
                     // Send Log
                     var uuid = Util.getUserMinecraftUUID(user);
-                    var embed = new EmbedBuilder()
-                            .setColor(2263842)
-                            .setThumbnail("https://minotar.net/avatar/%s/100.png".formatted(uuid))
-                            .setTitle("Verified Player", "https://namemc.com/search?q=%s".formatted(uuid))
+                    var namemc = "https://namemc.com/search?q=%s".formatted(uuid);
+                    var embed = Util.defaultBuilder()
+                            .setThumbnail("https://minotar.net/armor/body/%s/100.png".formatted(uuid))
+                            .setTitle("Player Verified")
                             .addField("Discord User", user.getAsTag(), false)
-                            .addField("Minecraft UUID", uuid.toString(), false)
-                            .setFooter("Discord ID: %s".formatted(user.getId()))
+                            .addField("Discord ID", user.getId(), false)
+                            .addField("Minecraft UUID", String.format("[%s](%s)", uuid, namemc), false)
                             .build();
                     Util.log(embed);
                 });
