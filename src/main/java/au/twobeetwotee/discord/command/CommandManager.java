@@ -1,8 +1,6 @@
 package au.twobeetwotee.discord.command;
 
 import au.twobeetwotee.discord.Main;
-import au.twobeetwotee.discord.command.commands.info.BotInfoCommand;
-import au.twobeetwotee.discord.command.commands.info.HelpCommand;
 import au.twobeetwotee.discord.util.Util;
 import lombok.Getter;
 import lombok.NonNull;
@@ -13,7 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CommandManager {
 
@@ -21,8 +21,7 @@ public class CommandManager {
     private final HashSet<Command> commands = new HashSet<>();
 
     public CommandManager() {
-        this.commands.add(new BotInfoCommand());
-        this.commands.add(new HelpCommand());
+        this.commands.addAll(loadCommands());
         Main.getJda().addEventListener(new CommandListener(this));
     }
     
