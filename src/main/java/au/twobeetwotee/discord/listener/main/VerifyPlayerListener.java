@@ -55,9 +55,8 @@ public class VerifyPlayerListener extends ListenerAdapter {
                     // Send Log
                     var uuid = Util.getUserMinecraftUUID(user);
                     var namemc = "https://namemc.com/search?q=%s".formatted(uuid);
-                    var embed = Util.defaultBuilder()
+                    var embed = Util.defaultBuilder("Player Verified")
                             .setThumbnail("https://minotar.net/armor/body/%s/100.png".formatted(uuid))
-                            .setTitle("Player Verified")
                             .addField("Discord User", user.getAsTag(), false)
                             .addField("Discord ID", user.getId(), false)
                             .addField("Minecraft UUID", String.format("[%s](%s)", uuid, namemc), false)

@@ -24,6 +24,11 @@ public abstract class Command extends CommandDataImpl {
 
     public abstract void onCommand(SlashCommandInteractionEvent event);
 
+    @Override
+    public String toString() {
+        return String.format("/%s - %s", name, desc);
+    }
+
     public enum Category {
         INFO, // General Bot Commands
         SERVER, // api.2b2t.au Commands

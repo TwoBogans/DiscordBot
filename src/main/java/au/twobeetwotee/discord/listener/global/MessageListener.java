@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.time.Instant;
 import java.util.Objects;
 
 public class MessageListener extends ListenerAdapter {
@@ -29,9 +28,8 @@ public class MessageListener extends ListenerAdapter {
                     event.getMessage().getContentDisplay()
             );
 
-            final var embed = Util.defaultBuilder()
-                    .setTitle("Private Message Received")
-                    .setAuthor(event.getAuthor().getAsTag(), event.getAuthor().getAvatarUrl())
+            final var embed = Util.defaultBuilder("Private Message Received")
+                    .setThumbnail(event.getAuthor().getAvatarUrl())
                     .setDescription(String.format("%s: %s",
                             event.getAuthor().getAsTag(),
                             event.getMessage().getContentDisplay()))

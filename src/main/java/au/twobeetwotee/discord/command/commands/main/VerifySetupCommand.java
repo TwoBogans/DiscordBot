@@ -14,10 +14,10 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 public class VerifySetupCommand extends Command {
 
     public VerifySetupCommand() {
-        super("verifysetup", "Setup Verify Button on Message ID", Category.MAIN);
+        super("verifysetup", "add verify button to message id", Category.MAIN);
         setGuildOnly(true);
         setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
-        addOption(OptionType.STRING, "messageid", "ID of Message to add Verify Button", true);
+        addOption(OptionType.STRING, "messageid", "message id to edit", true);
         Main.getJda().addEventListener(new VerifyPlayerListener());
     }
 

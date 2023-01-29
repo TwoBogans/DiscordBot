@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 public class WorldStatsCommand extends Command {
 
     public WorldStatsCommand() {
-        super("worldstats", "2b2t Australia World Statistics", Category.SERVER);
+        super("world", "world statistics (joins, size, etc)", Category.SERVER);
     }
 
     @Override
@@ -16,8 +16,7 @@ public class WorldStatsCommand extends Command {
         try {
             final var api = Main.getApi();
             final var stats = api.getWorldStats();
-            final var embed = Util.defaultBuilder()
-                    .setAuthor("World Statistics", null, "https://imgur.com/OkfrCr2.png")
+            final var embed = Util.defaultBuilder("World Statistics")
                     .addField("Joins", String.valueOf(stats.getPlayers()), true)
                     .addField("Size", String.format("%s GB", (int) stats.getSize()), true)
                     .addField("Age", String.format("%s Years, %s Months and %s Days.",

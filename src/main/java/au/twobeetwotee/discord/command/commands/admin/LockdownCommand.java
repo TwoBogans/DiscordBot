@@ -9,10 +9,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 public class LockdownCommand extends Command {
 
     public LockdownCommand() {
-        super("lockdown", "Set all the channels to 18+", Category.ADMIN);
+        super("lockdown", "set all the channels to 18+ (nsfw mode)", Category.ADMIN);
         setGuildOnly(true);
         setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
-        addOption(OptionType.BOOLEAN, "remove", "Remove NSFW from all channels", true);
+        addOption(OptionType.BOOLEAN, "remove", "whether or not to remove nsfw (default: false)", true);
     }
 
     @Override

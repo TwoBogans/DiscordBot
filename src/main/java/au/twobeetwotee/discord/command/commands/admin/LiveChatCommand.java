@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 public class LiveChatCommand extends Command {
 
     public LiveChatCommand() {
-        super("livechat", "Setup Live Chat", Category.ADMIN);
+        super("livechat", "setup live chat channel", Category.ADMIN);
         setGuildOnly(true);
         setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
         addOption(OptionType.CHANNEL, "channel", "Channel For Live Chat", true);

@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 public class ServerCommand extends Command {
 
     public ServerCommand() {
-        super("server", "2b2t Australia Server Statistics", Category.SERVER);
+        super("server", "server statistics (tps, etc)", Category.SERVER);
     }
 
     @Override
@@ -18,8 +18,7 @@ public class ServerCommand extends Command {
             final var queue = api.getQueueStats();
             final var stats = api.getServerStats();
             final var perf = stats.getPerformance();
-            final var embed = Util.defaultBuilder()
-                    .setAuthor("Server Statistics", null, "https://imgur.com/OkfrCr2.png")
+            final var embed = Util.defaultBuilder("Server Statistics")
                     .addField("Online", String.valueOf(stats.getOnline()), true)
                     .addField("Queue", String.valueOf(queue.getRegular() + queue.getPriority() + queue.getVeteran()), true)
                     .addField("TPS", String.valueOf(perf.getTps()), true)

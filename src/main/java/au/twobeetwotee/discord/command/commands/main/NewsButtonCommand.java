@@ -14,10 +14,10 @@ import java.util.ArrayList;
 public class NewsButtonCommand extends Command {
 
     public NewsButtonCommand() {
-        super("newsbutton", "Add News Button to Message ID", Category.MAIN);
+        super("newsbutton", "add news button to message id", Category.MAIN);
         setGuildOnly(true);
         setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
-        addOption(OptionType.STRING, "messageid", "ID of Message to add News Button", true);
+        addOption(OptionType.STRING, "messageid", "message id to edit", true);
     }
 
     @Override

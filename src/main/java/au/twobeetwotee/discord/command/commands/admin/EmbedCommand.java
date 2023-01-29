@@ -14,10 +14,10 @@ import java.io.StringReader;
 public class EmbedCommand extends Command {
 
     public EmbedCommand() {
-        super("embed", "Send JSON as message/embed", Category.ADMIN);
+        super("embed", "send json url as message/embed", Category.ADMIN);
         setGuildOnly(true);
         setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
-        addOption(OptionType.STRING, "url", "Raw JSON URL", true);
+        addOption(OptionType.STRING, "url", "raw json url (pastebin, etc)", true);
     }
 
     @Override

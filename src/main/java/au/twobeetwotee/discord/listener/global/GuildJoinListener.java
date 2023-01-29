@@ -13,8 +13,7 @@ public class GuildJoinListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         final var guild = event.getGuild();
-        final var embed = Util.defaultBuilder()
-                .setTitle("Guild Joined")
+        final var embed = Util.defaultBuilder("Guild Joined")
                 .setThumbnail(guild.getIconUrl())
                 .addField("Guild Name", guild.getName(), true)
                 .addField("Member Count", String.valueOf(guild.getMemberCount()), true)

@@ -150,8 +150,9 @@ public class Util {
         }
     }
 
-    public static EmbedBuilder defaultBuilder() {
+    public static EmbedBuilder defaultBuilder(String title) {
         return new EmbedBuilder()
+                .setAuthor(title, null, "https://imgur.com/OkfrCr2.png")
                 .setColor(2263842)
                 .setFooter("Australian Hausemaster", "https://imgur.com/v05uTf1.gif")
                 .setTimestamp(Instant.now());
