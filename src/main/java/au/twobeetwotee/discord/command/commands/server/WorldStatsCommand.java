@@ -17,7 +17,7 @@ public class WorldStatsCommand extends Command {
             final var api = Main.getApi();
             final var stats = api.getWorldStats();
             final var embed = Util.defaultBuilder()
-                    .setAuthor("World Statistics", "https://cdn.discordapp.com/attachments/1035500596012261396/1066685050076282900/2b2t_au_logo.png")
+                    .setAuthor("World Statistics", null, "https://imgur.com/OkfrCr2.png")
                     .addField("Joins", String.valueOf(stats.getPlayers()), true)
                     .addField("Size", String.format("%s GB", (int) stats.getSize()), true)
                     .addField("Age", String.format("%s Years, %s Months and %s Days.",

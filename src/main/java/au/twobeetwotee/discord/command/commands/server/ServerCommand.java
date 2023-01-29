@@ -19,11 +19,12 @@ public class ServerCommand extends Command {
             final var stats = api.getServerStats();
             final var perf = stats.getPerformance();
             final var embed = Util.defaultBuilder()
-                    .setAuthor("Server Statistics", "https://cdn.discordapp.com/attachments/1035500596012261396/1066685050076282900/2b2t_au_logo.png")
+                    .setAuthor("Server Statistics", null, "https://imgur.com/OkfrCr2.png")
                     .addField("Online", String.valueOf(stats.getOnline()), true)
                     .addField("Queue", String.valueOf(queue.getRegular() + queue.getPriority() + queue.getVeteran()), true)
                     .addField("TPS", String.valueOf(perf.getTps()), true)
                     .addField("Uptime", stats.getUptime(), true)
+                    .setImage("https://api.loohpjames.com/serverbanner.png?ip=2b2t.au")
                     .build();
 
             event.replyEmbeds(embed)
