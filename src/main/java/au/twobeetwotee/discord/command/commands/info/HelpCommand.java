@@ -18,8 +18,6 @@ public class HelpCommand extends Command {
     public void onCommand(SlashCommandInteractionEvent event) {
         var embed = Util.defaultBuilder("Information & Commands")
                 .setDescription("""
-                        \uD83D\uDCE8 admin@2b2t.au
-                        \uD83D\uDD17 https://2b2t.au/
                         \uD83D\uDD17 [main discord invite](https://discord.gg/popbob)
                         \uD83D\uDD17 [invite discord bot](%s)
                         ❤️ [like us on namemc?](https://namemc.com/server/2b2t.au)
@@ -35,7 +33,7 @@ public class HelpCommand extends Command {
 
             var commandLabels = categoryCommands.stream().map(Command::toString).toList();
             var categoryContent = String.join("\n", commandLabels);
-            var newField = new MessageEmbed.Field(category.name(), "```\n%s```".formatted(categoryContent), true);
+            var newField = new MessageEmbed.Field(category.name(), "```\n%s```".formatted(categoryContent), false);
 
             embed = embed.addField(newField);
         }
