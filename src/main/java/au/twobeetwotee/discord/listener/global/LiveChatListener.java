@@ -35,12 +35,12 @@ public class LiveChatListener extends ListenerAdapter {
         while (true) {
             try {
                 var now = Main.getApi().getChat().getMap();
-
+                if (now == null) continue;
                 for (Map.Entry<Integer, ChatResponse.ChatMessage> entry : now.entrySet()) {
+                    if (entry.getValue() == null) continue;
                     if (entry.getKey() == latestHash) continue;
-                    var message = entry.getValue();
 
-                    guildChannel.sendMessage(message.getMessage()).queue();
+                    guildChannel.sendMessage(entry.getValue().getMessage()).queue();
                     latestHash = entry.getKey();
                 }
             } catch (Exception e) {
