@@ -34,9 +34,11 @@ public class LiveChatListener extends ListenerAdapter {
     private void onTick() {
         while (true) {
             try {
-                var now = Main.getApi().getChat().getMap();
-                if (now == null) continue;
-                for (Map.Entry<Integer, ChatResponse.ChatMessage> entry : now.entrySet()) {
+                var response = Main.getApi().getChat();
+                System.out.println(response.toString());
+
+                if (response.getMap() == null) continue;
+                for (Map.Entry<Integer, ChatResponse.ChatMessage> entry : response.getMap().entrySet()) {
                     if (entry.getValue() == null) continue;
                     if (entry.getKey() == latestHash) continue;
 
