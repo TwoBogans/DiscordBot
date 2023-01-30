@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+// TODO Save Active Guilds
 @RequiredArgsConstructor
 public class LiveChatListener extends ListenerAdapter {
     @NonNull
@@ -50,6 +51,7 @@ public class LiveChatListener extends ListenerAdapter {
 
                     var msg = entry.getValue().getMessage();
 
+                    // TOOD FIX
                     msg = msg.replaceAll("_", "\\_")
                             .replaceAll("`", "\\`")
                             .replaceAll("\\*", "\\*`");
@@ -64,6 +66,7 @@ public class LiveChatListener extends ListenerAdapter {
 
                     msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
 
+                    // TODO if image url add to embed
                     var embed = new EmbedBuilder()
                             .setColor(Constants.EMBED_COLOR)
                             .setDescription(msg)
