@@ -12,5 +12,8 @@ public class Constants {
             .concat(ADMIN.replaceAll(" ", "_"))
             .concat(".gif");
     public static String SERVER_URL = "https://api.loohpjames.com/serverbanner.png?ip=2b2t.au";
+    public static String MINOTAR_BODY = "https://minotar.net/armor/body/%s/100.png";
+    public static String MINOTAR_HEAD = "https://minotar.net/avatar/%s/100.png";
+    public static String NAMEMC_URL = "https://namemc.com/search?q=%s";
     public static int EMBED_COLOR = 2263842;
 }

@@ -2,7 +2,6 @@ package au.twobeetwotee.discord.listener.global;
 
 import au.twobbeetwotee.api.responses.ChatMessage;
 import au.twobeetwotee.discord.Main;
-import au.twobeetwotee.discord.util.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -44,14 +43,15 @@ public class LiveChatListener extends ListenerAdapter {
                     if (entry.getValue() == null) continue;
                     if (entry.getKey() == latestHash) continue;
 
-                    var type = entry.getValue().getType();
+                    var chat = entry.getValue();
+                    var type = chat.getType();
                     var bold = type.equalsIgnoreCase("join")
                             || type.equalsIgnoreCase("quit")
                             || type.equalsIgnoreCase("death");
 
-                    var msg = entry.getValue().getMessage();
+                    var msg = chat.getMessage();
 
-                    // TOOD FIX
+                    // TODO FIX ESCAPE DISCORD FORMATTING
                     msg = msg.replaceAll("_", "\\_")
                             .replaceAll("`", "\\`")
                             .replaceAll("\\*", "\\*`");
@@ -66,13 +66,21 @@ public class LiveChatListener extends ListenerAdapter {
 
                     msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
 
-                    // TODO if image url add to embed
-                    var embed = new EmbedBuilder()
-                            .setColor(Constants.EMBED_COLOR)
-                            .setDescription(msg)
-                            .build();
+                    var pattern = Pattern.compile("/(https?\\:\\/\\/)?(www\\.)?([a-z0-9]([a-z0-9]|(\\-[a-z0-9]))*\\.)+[a-z0-9]+(\\/[\\-a-z0-9_]+)*(\\/[a-z0-9]+\\.(gif|jpg|png|jpeg|JPG|PNG|JPEG|GIF){1})/g");
+                    var imageUrl = pattern.matcher(msg).group();
 
-                    guildChannel.sendMessageEmbeds(embed).queue();
+                    if (!imageUrl.isEmpty())
+                        msg = pattern.matcher(msg).replaceAll("![image](%s)".formatted(imageUrl));
+
+                    var embed = new EmbedBuilder()
+                            .setColor(getColor(chat, content))
+                            .setDescription(msg);
+
+                    if (!imageUrl.isEmpty()) {
+                        embed = embed.setImage(imageUrl);
+                    }
+
+                    guildChannel.sendMessageEmbeds(embed.build()).queue();
                     latestHash = entry.getKey();
                 }
             } catch (Exception e) {
@@ -80,5 +88,16 @@ public class LiveChatListener extends ListenerAdapter {
                 break;
             }
         }
+    }
+
+    private int getColor(ChatMessage chatMessage, String messageContent) {
+        var type = chatMessage.getType();
+        var greenText = messageContent.startsWith(">");
+        var blueText = messageContent.startsWith("`");
+        return switch (type) {
+            case "join", "quit" -> 986895;
+            case "chat" -> greenText ? 44807 : blueText ? 24244 : 986895;
+            case "death" -> 16724522;
+        };
     }
 }

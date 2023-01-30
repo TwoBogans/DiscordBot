@@ -1,6 +1,7 @@
 package au.twobeetwotee.discord.listener.main;
 
 import au.twobeetwotee.discord.Main;
+import au.twobeetwotee.discord.util.Constants;
 import au.twobeetwotee.discord.util.Util;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -54,9 +55,9 @@ public class VerifyPlayerListener extends ListenerAdapter {
 
                     // Send Log
                     var uuid = Util.getUserMinecraftUUID(user);
-                    var namemc = "https://namemc.com/search?q=%s".formatted(uuid);
+                    var namemc = Constants.NAMEMC_URL.formatted(uuid);
                     var embed = Util.defaultBuilder("Player Verified")
-                            .setThumbnail("https://minotar.net/armor/body/%s/100.png".formatted(uuid))
+                            .setThumbnail(Constants.MINOTAR_BODY.formatted(uuid))
                             .addField("Discord User", user.getAsTag(), false)
                             .addField("Discord ID", user.getId(), false)
                             .addField("Minecraft UUID", String.format("[%s](%s)", uuid, namemc), false)
