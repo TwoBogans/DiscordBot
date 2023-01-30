@@ -49,15 +49,14 @@ public class LiveChatListener extends ListenerAdapter {
 
                     var msg = entry.getValue().getMessage();
 
-                    if (bold) {
-                        msg = msg.replaceAll("_", "\\_");
-                        msg = "**%s**".formatted(msg);
-                    } else {
-                        var who = msg.substring(msg.indexOf("<") + 1, msg.indexOf(">")).trim();
-                        var msg1 = msg.split(Pattern.quote("> "), 2)[1];
-                        who = who.replaceAll("_", "\\_");
-                        msg = "**<%s>** %s".formatted(who, msg1);
-                    }
+                    msg = msg.replaceAll("_", "\\_")
+                            .replaceAll("`", "\\`")
+                            .replaceAll("\\*", "\\*`");
+
+                    var name = msg.substring(msg.indexOf("<") + 1, msg.indexOf(">")).trim();
+                    var content = msg.split(Pattern.quote("> "), 2)[1];
+
+                    msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
 
                     var embed = new EmbedBuilder()
                             .setDescription(msg)
