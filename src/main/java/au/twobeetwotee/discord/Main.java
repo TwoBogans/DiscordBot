@@ -1,6 +1,7 @@
 package au.twobeetwotee.discord;
 
 import au.twobbeetwotee.api.API;
+import au.twobeetwotee.discord.command.Command;
 import au.twobeetwotee.discord.command.CommandManager;
 import au.twobeetwotee.discord.listener.global.GuildJoinListener;
 import au.twobeetwotee.discord.listener.global.MessageListener;
@@ -20,6 +21,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -45,27 +47,36 @@ public class Main {
 
         api = new API();
 
-        jda = JDABuilder
-                .createDefault(config.getToken())
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .setActivity(Activity.playing("2b2t.au"))
-                .setStatus(OnlineStatus.DO_NOT_DISTURB)
-                .build();
+        jda = JDABuilder.createDefault(config.getToken())
+                    .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                    .setActivity(Activity.playing("2b2t.au"))
+                    .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                    .build();
 
         commandManager = new CommandManager();
 
-        jda.updateCommands()
-                .addCommands(commandManager.getCommands())
-                .queue();
+        jda.updateCommands().addCommands(commandManager.getCommands()
+                    .stream()
+                    .filter(command -> command.getCategory() != Command.Category.MAIN)
+                    .collect(Collectors.toList()))
+                    .queue();
+
+        var mainGuild = jda.getGuildById(config.getMainGuild());
+        if (mainGuild != null) {
+            mainGuild.updateCommands().addCommands(commandManager.getCommands()
+                    .stream()
+                    .filter(command -> command.getCategory() == Command.Category.MAIN)
+                    .collect(Collectors.toList()))
+                    .queue();
+        }
 
         jda.addEventListener(new MessageListener(), new GuildJoinListener());
 
         // Update Nickname
         // TODO Fix?
-        jda.getGuilds()
-                .forEach(guild -> guild.retrieveMember(Main.getJda().getSelfUser())
-                        .queue(member -> guild.modifyNickname(member, "Australian Hausemaster")
-                                .queue()));
+        jda.getGuilds().forEach(guild -> guild.retrieveMember(Main.getJda().getSelfUser())
+                    .queue(member -> guild.modifyNickname(member, "Australian Hausemaster")
+                    .queue()));
     }
 
     @SneakyThrows
