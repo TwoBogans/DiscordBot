@@ -67,10 +67,15 @@ public class LiveChatListener extends ListenerAdapter {
                     msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
 
                     var pattern = Pattern.compile("/(https?\\:\\/\\/)?(www\\.)?([a-z0-9]([a-z0-9]|(\\-[a-z0-9]))*\\.)+[a-z0-9]+(\\/[\\-a-z0-9_]+)*(\\/[a-z0-9]+\\.(gif|jpg|png|jpeg|JPG|PNG|JPEG|GIF){1})/g");
-                    var imageUrl = pattern.matcher(msg).group();
+                    var imageUrl = "";
+                    try {
+                        imageUrl = pattern.matcher(msg).group();
 
-                    if (!imageUrl.isEmpty())
-                        msg = pattern.matcher(msg).replaceAll("![image](%s)".formatted(imageUrl));
+                        if (!imageUrl.isEmpty())
+                            msg = pattern.matcher(msg).replaceAll("![image](%s)".formatted(imageUrl));
+                    } catch (IllegalStateException ignored) {
+
+                    }
 
                     var embed = new EmbedBuilder()
                             .setColor(getColor(chat, content))
