@@ -95,9 +95,9 @@ public class LiveChatListener extends ListenerAdapter {
         var greenText = messageContent.startsWith(">");
         var blueText = messageContent.startsWith("`");
         return switch (type) {
-            case "join", "quit" -> 986895;
             case "chat" -> greenText ? 44807 : blueText ? 24244 : 986895;
             case "death" -> 16724522;
+            default -> 986895;
         };
     }
 }
