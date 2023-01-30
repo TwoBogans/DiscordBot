@@ -11,5 +11,6 @@ public class Constants {
     public static String ADMIN_URL = WEBSITE.concat("/")
             .concat(ADMIN.replaceAll(" ", "_"))
             .concat(".gif");
+    public static String SERVER_URL = "https://api.loohpjames.com/serverbanner.png?ip=2b2t.au";
     public static int EMBED_COLOR = 2263842;
 }

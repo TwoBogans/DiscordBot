@@ -1,74 +1,52 @@
 package au.twobeetwotee.discord.listener.global;
 
-import com.google.common.collect.Sets;
+import au.twobbeetwotee.api.responses.ChatResponse;
+import au.twobeetwotee.discord.Main;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import au.twobeetwotee.discord.Main;
 
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class LiveChatListener extends ListenerAdapter {
-
     @NonNull
-    private Guild guild;
-    @NonNull
-    private TextChannel channel;
+    private TextChannel guildChannel;
 
-    private Set<String> messages;
+    private int latestHash = -1;
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getChannel() == channel) {
-            // Send Message
+        if (event.getChannel() == guildChannel) {
+            event.getMessage().addReaction(Emoji.fromUnicode("✅")).queue();
         }
     }
 
     public void startThread() {
-        final var i = new AtomicInteger();
-        final var t = new Thread(() -> {
-            while (true) {
-                onTick(i);
-            }
-        });
+        final var t = new Thread(this::onTick);
         t.setDaemon(true);
         t.start();
     }
 
-    private void onTick(AtomicInteger i) {
-        try {
-            i.incrementAndGet();
+    private void onTick() {
+        while (true) {
+            try {
+                var now = Main.getApi().getChat().getMap();
 
-            var now = Main.getApi().getChat();
+                for (Map.Entry<Integer, ChatResponse.ChatMessage> entry : now.entrySet()) {
+                    if (entry.getKey() == latestHash) continue;
+                    var message = entry.getValue();
 
-            if (messages == null) {
-                messages = Set.copyOf(now.getMessages());
-                return;
+                    guildChannel.sendMessage(message.getMessage()).queue();
+                    latestHash = entry.getKey();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
             }
-
-            Set<String> lM, nM, dM;
-
-            { // logic level 1: current state
-                lM = messages;
-                nM = Set.copyOf(now.getMessages());
-            }
-
-            { // logic level 2: get difference
-                dM = Sets.difference(lM, nM);
-            }
-
-            if (i.get() >= 20) {
-                if (dM.isEmpty()) nM.forEach(message -> channel.sendMessage(message).queue());
-                else dM.forEach(message -> channel.sendMessage(message).queue());
-                System.out.printf("List: %s %s %s %s", lM.size(), nM.size(), dM.size(), dM);
-            }
-        } catch (Exception e) {
-
         }
     }
 }

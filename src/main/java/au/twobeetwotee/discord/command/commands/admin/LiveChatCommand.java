@@ -22,7 +22,7 @@ public class LiveChatCommand extends Command {
         var option = event.getOption("channel");
         if (option != null) {
             var channel = option.getAsChannel();
-            var listener = new LiveChatListener(channel.getGuild(), channel.asTextChannel());
+            var listener = new LiveChatListener(channel.asTextChannel());
             listener.startThread();
             Main.getJda().addEventListener(listener);
             event.reply("Success!")

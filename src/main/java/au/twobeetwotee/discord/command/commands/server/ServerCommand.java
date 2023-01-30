@@ -2,6 +2,7 @@ package au.twobeetwotee.discord.command.commands.server;
 
 import au.twobeetwotee.discord.Main;
 import au.twobeetwotee.discord.command.Command;
+import au.twobeetwotee.discord.util.Constants;
 import au.twobeetwotee.discord.util.Util;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -23,7 +24,7 @@ public class ServerCommand extends Command {
                     .addField("Queue", String.valueOf(queue.getRegular() + queue.getPriority() + queue.getVeteran()), true)
                     .addField("TPS", String.valueOf(perf.getTps()), true)
                     .addField("Uptime", stats.getUptime(), true)
-                    .setImage("https://api.loohpjames.com/serverbanner.png?ip=2b2t.au")
+                    .setImage(Constants.SERVER_URL)
                     .build();
 
             event.replyEmbeds(embed)
