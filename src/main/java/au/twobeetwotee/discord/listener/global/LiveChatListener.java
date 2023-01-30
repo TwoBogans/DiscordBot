@@ -20,9 +20,10 @@ public class LiveChatListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getChannel() == guildChannel) {
-            event.getMessage().addReaction(Emoji.fromUnicode("✅")).queue();
-        }
+        if (event.getChannel() != guildChannel) return;
+        if (event.getAuthor().isBot()) return;
+
+        event.getMessage().addReaction(Emoji.fromUnicode("✅")).queue();
     }
 
     public void startThread() {
