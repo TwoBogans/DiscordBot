@@ -2,6 +2,7 @@ package au.twobeetwotee.discord.listener.global;
 
 import au.twobbeetwotee.api.responses.ChatMessage;
 import au.twobeetwotee.discord.Main;
+import au.twobeetwotee.discord.util.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -53,12 +54,18 @@ public class LiveChatListener extends ListenerAdapter {
                             .replaceAll("`", "\\`")
                             .replaceAll("\\*", "\\*`");
 
-                    var name = msg.substring(msg.indexOf("<") + 1, msg.indexOf(">")).trim();
-                    var content = msg.split(Pattern.quote("> "), 2)[1];
+                    var name = "";
+                    var content = "";
+
+                    if (!bold) {
+                        name = msg.substring(msg.indexOf("<") + 1, msg.indexOf(">")).trim();
+                        content = msg.split(Pattern.quote("> "), 2)[1];
+                    }
 
                     msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
 
                     var embed = new EmbedBuilder()
+                            .setColor(Constants.EMBED_COLOR)
                             .setDescription(msg)
                             .build();
 
