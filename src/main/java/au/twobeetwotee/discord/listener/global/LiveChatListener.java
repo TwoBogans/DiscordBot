@@ -1,6 +1,6 @@
 package au.twobeetwotee.discord.listener.global;
 
-import au.twobbeetwotee.api.responses.ChatResponse;
+import au.twobbeetwotee.api.responses.ChatMessage;
 import au.twobeetwotee.discord.Main;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +35,11 @@ public class LiveChatListener extends ListenerAdapter {
         while (true) {
             try {
                 var response = Main.getApi().getChat();
-                System.out.println(response.toString());
-
-                if (response.getMap() == null) continue;
-                for (Map.Entry<Integer, ChatResponse.ChatMessage> entry : response.getMap().entrySet()) {
+                for (Map.Entry<Integer, ChatMessage> entry : response.entrySet()) {
                     if (entry.getValue() == null) continue;
                     if (entry.getKey() == latestHash) continue;
+
+                    System.out.println(response);
 
                     guildChannel.sendMessage(entry.getValue().getMessage()).queue();
                     latestHash = entry.getKey();
