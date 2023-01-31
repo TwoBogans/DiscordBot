@@ -41,7 +41,7 @@ public class Main {
     @Getter
     private static long startTime;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         startTime = System.currentTimeMillis();
 
         gson = new GsonBuilder().setPrettyPrinting().create();
@@ -54,7 +54,8 @@ public class Main {
                     .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .setActivity(Activity.playing("2b2t.au"))
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
-                    .build();
+                    .build()
+                    .awaitReady();
 
         commandManager = new CommandManager();
 

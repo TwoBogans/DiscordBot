@@ -30,15 +30,16 @@ public class LiveChatManager {
         guildMap = loadLiveChats();
         guildMap.forEach((guildId, textChannelId) -> {
             var guild = jda.getGuildById(guildId);
-            var channel = jda.getTextChannelById(textChannelId);
-            System.out.printf("%s %s %s %s", guild, channel, guildId, textChannelId);
-            if (guild != null && channel != null) {
-                var newListener = new LiveChatListener(guild, channel, jda);
-                listenerMap.put(guild.getIdLong(), newListener);
-                System.out.printf("Added to listener map %s %s",
-                        guild.getIdLong(),
-                        newListener
-                );
+            if (guild != null) {
+                var channel = guild.getTextChannelById(textChannelId);
+                if (channel != null) {
+                    var newListener = new LiveChatListener(guild, channel, jda);
+                    listenerMap.put(guild.getIdLong(), newListener);
+                    System.out.printf("Added to listener map %s %s",
+                            guild.getIdLong(),
+                            newListener
+                    );
+                }
             }
         });
 
