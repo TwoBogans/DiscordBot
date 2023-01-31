@@ -26,22 +26,21 @@ public class LiveChatManager {
     public LiveChatManager() {
         jda = Main.getJda();
         gson = Main.getGson();
+
         guildMap = loadLiveChats();
         guildMap.forEach((guildId, textChannelId) -> {
-            try {
-                var guild = jda.getGuildById(guildId);
-                var channel = jda.getTextChannelById(textChannelId);
-                if (guild != null && channel != null) {
-                    var newListener = new LiveChatListener(guild, channel);
-                    listenerMap.put(guild.getIdLong(), newListener);
-                } else {
-                    System.out.printf("%s %s %s %s", guildId, textChannelId, guild, channel);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            var guild = jda.getGuildById(guildId);
+            var channel = jda.getTextChannelById(textChannelId);
+            if (guild != null && channel != null) {
+                var newListener = new LiveChatListener(guild, channel);
+                listenerMap.put(guild.getIdLong(), newListener);
             }
         });
-        listenerMap.values().forEach(LiveChatListener::init);
+
+        listenerMap.values().forEach(liveChatListener -> {
+            jda.addEventListener(liveChatListener);
+            liveChatListener.startThread();
+        });
     }
 
     public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel) {
@@ -49,6 +48,7 @@ public class LiveChatManager {
 
         guildMap.put(guild.getIdLong(), textChannel.getIdLong());
         jda.addEventListener(newListener);
+        newListener.startThread();
 
         saveLiveChats();
     }

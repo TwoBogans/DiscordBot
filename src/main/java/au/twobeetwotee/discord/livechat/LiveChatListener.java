@@ -30,12 +30,7 @@ public class LiveChatListener extends ListenerAdapter {
         event.getMessage().delete().queue();
     }
 
-    public void init() {
-        Main.getJda().addEventListener(this);
-        startThread();
-    }
-
-    private void startThread() {
+    public void startThread() {
         final var t = new Thread(this::onTick);
         t.setDaemon(true);
         t.start();
