@@ -82,7 +82,7 @@ public class LiveChatManager {
         saveLiveChats();
 
         // Debug
-        System.out.printf("Removed Live Chat: %s %s", guild.getName(), textChannel.getName());
+        System.out.printf("Removed Live Chat: %s %s %n", guild.getName(), textChannel.getName());
     }
 
     public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel, boolean save) {
@@ -99,7 +99,7 @@ public class LiveChatManager {
         guildMap.put(newId, newChannel);
         listenerMap.put(newId, newListener);
 
-        System.out.printf("Registered Live Chat: %s %s", guild.getIdLong(), newListener);
+        System.out.printf("Registered Live Chat: %s %s %n", guild.getIdLong(), newListener);
 
         if (save) {
             saveLiveChats();
