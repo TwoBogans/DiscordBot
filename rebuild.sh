@@ -12,7 +12,7 @@ docker container stop discord-bot &&
 
 # Build New Image & Run
 docker build -t discord-bot . &&
-  docker run --name discord-bot -it -d -v livechats.json:/app/livechats.json discord-bot &&
+  docker run --name discord-bot -it -d -v /home/debian/discord-bot/livechats.json:/app discord-bot &&
   echo "" &&
   echo "Discord Bot successfully rebuilt." &&
   echo ""
