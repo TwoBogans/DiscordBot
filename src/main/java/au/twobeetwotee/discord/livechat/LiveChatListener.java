@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 public class LiveChatListener {
     private final Guild guild;
     private final TextChannel guildChannel;
+    private final Listener listener;
     private final Thread thread;
     private int latestHash = -1;
 
@@ -27,7 +28,9 @@ public class LiveChatListener {
         this.guild = guild;
         this.guildChannel = guildChannel;
 
-        Main.getJda().addEventListener(new Listener(this));
+        listener = new Listener(this);
+
+        Main.getJda().addEventListener(listener);
 
         thread = new Thread(this);
         thread.setDaemon(true);

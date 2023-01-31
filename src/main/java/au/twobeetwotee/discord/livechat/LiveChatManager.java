@@ -4,10 +4,15 @@ import au.twobeetwotee.discord.Main;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.channel.ChannelDeleteEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,14 +43,23 @@ public class LiveChatManager {
             }
         });
 
-        listenerMap.values().forEach(liveChatListener -> {
-            System.out.printf("Started live chat for %s %s",
-                    liveChatListener.getGuild().getName(),
-                    liveChatListener.getGuildChannel().getName()
-                );
-        });
+        saveLiveChats();
+
+        jda.addEventListener(new Listener(this));
 
         System.out.println(gson.toJson(guildMap));
+    }
+
+    @RequiredArgsConstructor
+    protected static class Listener extends ListenerAdapter {
+        @NonNull LiveChatManager manager;
+        @Override
+        public void onChannelDelete(@NotNull ChannelDeleteEvent event) {
+            if (!event.isFromType(ChannelType.TEXT)) return;
+            if (manager.listenerMap.containsKey(event.getGuild().getIdLong())) {
+                manager.removeLiveChat(event.getGuild(), event.getChannel().asTextChannel());
+            }
+        }
     }
 
     public void removeLiveChat(@NonNull LiveChatListener listener) {
@@ -53,31 +67,39 @@ public class LiveChatManager {
     }
 
     public void removeLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel) {
-        var listener = listenerMap.get(guild.getIdLong());
-        var thread = listener.getThread();
+        var id = guild.getIdLong();
+        var listener = listenerMap.get(id);
 
-        guildMap.remove(guild.getIdLong(), textChannel.getIdLong());
-        listenerMap.remove(guild.getIdLong());
-        jda.removeEventListener(listener);
-        thread.stop();
+        // Remove Listeners
+        jda.removeEventListener(listener.getListener());
+        listener.getThread().stop();
 
-        System.out.printf("Remove Live Chat: %s %s", guild.getName(), textChannel.getName());
+        // Remove From Memory
+        guildMap.remove(id, textChannel.getIdLong());
+        listenerMap.remove(id);
+
+        // Save File
+        saveLiveChats();
+
+        // Debug
+        System.out.printf("Removed Live Chat: %s %s", guild.getName(), textChannel.getName());
     }
 
     public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel, boolean save) {
-        if (listenerMap.containsKey(guild.getIdLong())) {
-            removeLiveChat(listenerMap.get(guild.getIdLong()));
+        var id = guild.getIdLong();
+
+        if (listenerMap.containsKey(id)) {
+            removeLiveChat(listenerMap.get(id));
         }
 
         var newListener = new LiveChatListener(guild, textChannel);
+        var newId = newListener.getGuild().getIdLong();
+        var newChannel = newListener.getGuildChannel().getIdLong();
 
-        guildMap.put(newListener.getGuild().getIdLong(), newListener.getGuildChannel().getIdLong());
-        listenerMap.put(newListener.getGuild().getIdLong(), newListener);
+        guildMap.put(newId, newChannel);
+        listenerMap.put(newId, newListener);
 
-        System.out.printf("Added to listener map %s %s",
-                guild.getIdLong(),
-                newListener
-        );
+        System.out.printf("Registered Live Chat: %s %s", guild.getIdLong(), newListener);
 
         if (save) {
             saveLiveChats();
