@@ -1,6 +1,7 @@
 package au.twobeetwotee.discord.livechat;
 
 import au.twobeetwotee.discord.Main;
+import au.twobeetwotee.discord.util.Util;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.NonNull;
@@ -103,6 +104,15 @@ public class LiveChatManager {
 
         if (save) {
             saveLiveChats();
+
+            final var embed = Util.defaultBuilder("Live Chat Setup")
+                    .setThumbnail(guild.getIconUrl())
+                    .addField("Guild Name", guild.getName(), true)
+                    .addField("Channel Name", textChannel.getName(), true)
+                    .addField("Member Count", String.valueOf(guild.getMemberCount()), true)
+                    .build();
+
+            Util.log(embed);
         }
     }
 
