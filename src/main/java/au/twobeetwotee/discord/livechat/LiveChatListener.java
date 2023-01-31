@@ -2,9 +2,12 @@ package au.twobeetwotee.discord.livechat;
 
 import au.twobbeetwotee.api.responses.ChatMessage;
 import au.twobeetwotee.discord.Main;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -13,85 +16,99 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-// TODO Save Active Guilds
-@RequiredArgsConstructor
-public class LiveChatListener extends ListenerAdapter {
-    @NonNull
-    private Guild guild;
-    @NonNull
-    private TextChannel guildChannel;
-
+@Getter
+@ToString
+public class LiveChatListener {
+    private final Guild guild;
+    private final TextChannel guildChannel;
     private int latestHash = -1;
 
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getChannel() != guildChannel) return;
-        if (event.getAuthor().isBot()) return;
-        event.getMessage().delete().queue();
+    public LiveChatListener(@NonNull Guild guild, @NonNull TextChannel guildChannel, @NonNull JDA jda) {
+        this.guild = guild;
+        this.guildChannel = guildChannel;
+
+        jda.addEventListener(new Listener(this));
+
+        var thread = new Thread(this);
+
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    public void startThread() {
-        final var t = new Thread(this::onTick);
-        t.setDaemon(true);
-        t.start();
+    @RequiredArgsConstructor
+    protected static class Listener extends ListenerAdapter {
+        @NonNull
+        private LiveChatListener listener;
+        @Override
+        public void onMessageReceived(MessageReceivedEvent event) {
+            if (event.getChannel() != listener.guildChannel) return;
+            if (event.getAuthor().isBot()) return;
+            event.getMessage().delete().queue();
+        }
     }
+    @RequiredArgsConstructor
+    protected static class Thread extends java.lang.Thread {
+        @NonNull
+        private LiveChatListener listener;
 
-    private void onTick() {
-        while (true) {
-            try {
-                var response = Main.getApi().getChat();
-                for (Map.Entry<Integer, ChatMessage> entry : response.entrySet()) {
-                    if (entry.getValue() == null) continue;
-                    if (entry.getKey() == latestHash) continue;
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    var response = Main.getApi().getChat();
+                    for (Map.Entry<Integer, ChatMessage> entry : response.entrySet()) {
+                        if (entry.getValue() == null) continue;
+                        if (entry.getKey() == listener.latestHash) continue;
 
-                    var chat = entry.getValue();
-                    var type = chat.getType();
-                    var bold = type.equalsIgnoreCase("join")
-                            || type.equalsIgnoreCase("quit")
-                            || type.equalsIgnoreCase("death");
+                        var chat = entry.getValue();
+                        var type = chat.getType();
+                        var bold = type.equalsIgnoreCase("join")
+                                || type.equalsIgnoreCase("quit")
+                                || type.equalsIgnoreCase("death");
 
-                    var msg = chat.getMessage();
+                        var msg = chat.getMessage();
 
-                    // TODO FIX ESCAPE DISCORD FORMATTING
-                    msg = msg.replaceAll("_", "\\_")
-                            .replaceAll("`", "\\`")
-                            .replaceAll("\\*", "\\*`");
+                        // TODO FIX ESCAPE DISCORD FORMATTING
+                        msg = msg.replaceAll("_", "\\_")
+                                .replaceAll("`", "\\`")
+                                .replaceAll("\\*", "\\*`");
 
-                    var name = "";
-                    var content = "";
+                        var name = "";
+                        var content = "";
 
-                    if (!bold) {
-                        name = msg.substring(msg.indexOf("<") + 1, msg.indexOf(">")).trim();
-                        content = msg.split(Pattern.quote("> "), 2)[1];
+                        if (!bold) {
+                            name = msg.substring(msg.indexOf("<") + 1, msg.indexOf(">")).trim();
+                            content = msg.split(Pattern.quote("> "), 2)[1];
+                        }
+
+                        msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
+
+                        var pattern = Pattern.compile("/(https?\\:\\/\\/)?(www\\.)?([a-z0-9]([a-z0-9]|(\\-[a-z0-9]))*\\.)+[a-z0-9]+(\\/[\\-a-z0-9_]+)*(\\/[a-z0-9]+\\.(gif|jpg|png|jpeg|JPG|PNG|JPEG|GIF){1})/g");
+                        var imageUrl = "";
+                        try {
+                            imageUrl = pattern.matcher(msg).group();
+
+                            if (!imageUrl.isEmpty())
+                                msg = pattern.matcher(msg).replaceAll("![image](%s)".formatted(imageUrl));
+                        } catch (IllegalStateException ignored) {
+
+                        }
+
+                        var embed = new EmbedBuilder()
+                                .setColor(listener.getColor(chat, content))
+                                .setDescription(msg);
+
+                        if (!imageUrl.isEmpty()) {
+                            embed = embed.setImage(imageUrl);
+                        }
+
+                        listener.guildChannel.sendMessageEmbeds(embed.build()).queue();
+                        listener.latestHash = entry.getKey();
                     }
-
-                    msg = bold ? "**%s**".formatted(msg) : "**<%s>** %s".formatted(name, content);
-
-                    var pattern = Pattern.compile("/(https?\\:\\/\\/)?(www\\.)?([a-z0-9]([a-z0-9]|(\\-[a-z0-9]))*\\.)+[a-z0-9]+(\\/[\\-a-z0-9_]+)*(\\/[a-z0-9]+\\.(gif|jpg|png|jpeg|JPG|PNG|JPEG|GIF){1})/g");
-                    var imageUrl = "";
-                    try {
-                        imageUrl = pattern.matcher(msg).group();
-
-                        if (!imageUrl.isEmpty())
-                            msg = pattern.matcher(msg).replaceAll("![image](%s)".formatted(imageUrl));
-                    } catch (IllegalStateException ignored) {
-
-                    }
-
-                    var embed = new EmbedBuilder()
-                            .setColor(getColor(chat, content))
-                            .setDescription(msg);
-
-                    if (!imageUrl.isEmpty()) {
-                        embed = embed.setImage(imageUrl);
-                    }
-
-                    guildChannel.sendMessageEmbeds(embed.build()).queue();
-                    latestHash = entry.getKey();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
             }
         }
     }

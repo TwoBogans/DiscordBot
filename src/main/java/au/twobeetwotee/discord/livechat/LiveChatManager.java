@@ -31,25 +31,30 @@ public class LiveChatManager {
         guildMap.forEach((guildId, textChannelId) -> {
             var guild = jda.getGuildById(guildId);
             var channel = jda.getTextChannelById(textChannelId);
+            System.out.printf("%s %s %s %s", guild, channel, guildId, textChannelId);
             if (guild != null && channel != null) {
-                var newListener = new LiveChatListener(guild, channel);
+                var newListener = new LiveChatListener(guild, channel, jda);
                 listenerMap.put(guild.getIdLong(), newListener);
+                System.out.printf("Added to listener map %s %s",
+                        guild.getIdLong(),
+                        newListener
+                );
             }
         });
 
         listenerMap.values().forEach(liveChatListener -> {
-            jda.addEventListener(liveChatListener);
-            liveChatListener.startThread();
+            System.out.printf("Started live chat for %s %s",
+                    liveChatListener.getGuild().getName(),
+                    liveChatListener.getGuildChannel().getName()
+                );
         });
+
+        System.out.println(gson.toJson(guildMap));
     }
 
     public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel) {
-        var newListener = new LiveChatListener(guild, textChannel);
-
-        guildMap.put(guild.getIdLong(), textChannel.getIdLong());
-        jda.addEventListener(newListener);
-        newListener.startThread();
-
+        var newListener = new LiveChatListener(guild, textChannel, jda);
+        guildMap.put(newListener.getGuild().getIdLong(), newListener.getGuildChannel().getIdLong());
         saveLiveChats();
     }
 
@@ -58,11 +63,8 @@ public class LiveChatManager {
         var path = Paths.get(this.path);
         try {
             var reader = Files.newBufferedReader(path);
-
             HashMap<Long, Long> hashMap = gson.fromJson(reader, new TypeToken<HashMap<Long, Long>>(){}.getType());
-
             reader.close();
-
             return hashMap;
         } catch (IOException e) {
             Files.write(path, Collections.singleton(gson.toJson(new HashMap<>())));
