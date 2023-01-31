@@ -1,12 +1,12 @@
-package au.twobeetwotee.discord.listener.global;
+package au.twobeetwotee.discord.livechat;
 
 import au.twobbeetwotee.api.responses.ChatMessage;
 import au.twobeetwotee.discord.Main;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class LiveChatListener extends ListenerAdapter {
     @NonNull
+    private Guild guild;
+    @NonNull
     private TextChannel guildChannel;
 
     private int latestHash = -1;
@@ -25,8 +27,7 @@ public class LiveChatListener extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getChannel() != guildChannel) return;
         if (event.getAuthor().isBot()) return;
-
-        event.getMessage().addReaction(Emoji.fromUnicode("✅")).queue();
+        event.getMessage().delete().queue();
     }
 
     public void startThread() {
@@ -100,8 +101,9 @@ public class LiveChatListener extends ListenerAdapter {
         var greenText = messageContent.startsWith(">");
         var blueText = messageContent.startsWith("`");
         return switch (type) {
-            case "chat" -> greenText ? 44807 : blueText ? 24244 : 986895;
+            case "chat" -> greenText ? 44807 : blueText ? 24244 : 14211288;
             case "death" -> 16724522;
+            case "join", "quit" -> 7039851;
             default -> 986895;
         };
     }

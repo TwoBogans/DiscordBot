@@ -2,7 +2,6 @@ package au.twobeetwotee.discord.command.commands.admin;
 
 import au.twobeetwotee.discord.Main;
 import au.twobeetwotee.discord.command.Command;
-import au.twobeetwotee.discord.listener.global.LiveChatListener;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -22,12 +21,21 @@ public class LiveChatCommand extends Command {
         var option = event.getOption("channel");
         if (option != null) {
             var channel = option.getAsChannel();
-            var listener = new LiveChatListener(channel.asTextChannel());
-            listener.startThread();
-            Main.getJda().addEventListener(listener);
-            event.reply("Success!")
-                    .setEphemeral(true)
-                    .queue();
+            var manager = Main.getLiveChatManager();
+
+            try {
+                var text = channel.asTextChannel();
+
+                manager.registerNewLiveChat(channel.getGuild(), text);
+
+                event.reply("Successfully registered new live chat channel! %s".formatted(text.getAsMention()))
+                        .setEphemeral(true)
+                        .queue();
+            } catch (IllegalStateException e) {
+                event.reply(e.getMessage())
+                        .setEphemeral(true)
+                        .queue();
+            }
         }
     }
 }

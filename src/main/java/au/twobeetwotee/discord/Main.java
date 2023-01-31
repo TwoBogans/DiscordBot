@@ -6,6 +6,7 @@ import au.twobeetwotee.discord.command.CommandManager;
 import au.twobeetwotee.discord.listener.global.GuildJoinListener;
 import au.twobeetwotee.discord.listener.global.MessageListener;
 import au.twobeetwotee.discord.util.Config;
+import au.twobeetwotee.discord.livechat.LiveChatManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
@@ -35,6 +36,8 @@ public class Main {
     private static Config config;
     @Getter
     private static CommandManager commandManager;
+    @Getter
+    private static LiveChatManager liveChatManager;
     @Getter
     private static long startTime;
 
@@ -77,6 +80,8 @@ public class Main {
         jda.getGuilds().forEach(guild -> guild.retrieveMember(Main.getJda().getSelfUser())
                     .queue(member -> guild.modifyNickname(member, "Australian Hausemaster")
                     .queue()));
+
+        liveChatManager = new LiveChatManager();
     }
 
     @SneakyThrows
