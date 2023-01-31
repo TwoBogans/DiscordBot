@@ -32,7 +32,7 @@ public class LiveChatCommand extends Command {
                         .setEphemeral(true)
                         .queue();
             } catch (IllegalStateException e) {
-                event.reply(e.getMessage())
+                event.reply("Must be a text channel!")
                         .setEphemeral(true)
                         .queue();
             }

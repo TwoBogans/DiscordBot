@@ -41,7 +41,7 @@ public class LiveChatManager {
                 e.printStackTrace();
             }
         });
-        listenerMap.values().forEach(jda::addEventListener);
+        listenerMap.values().forEach(LiveChatListener::init);
     }
 
     public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel) {
