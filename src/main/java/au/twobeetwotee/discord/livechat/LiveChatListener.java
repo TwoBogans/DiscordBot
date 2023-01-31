@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -21,16 +20,16 @@ import java.util.regex.Pattern;
 public class LiveChatListener {
     private final Guild guild;
     private final TextChannel guildChannel;
+    private final Thread thread;
     private int latestHash = -1;
 
-    public LiveChatListener(@NonNull Guild guild, @NonNull TextChannel guildChannel, @NonNull JDA jda) {
+    public LiveChatListener(@NonNull Guild guild, @NonNull TextChannel guildChannel) {
         this.guild = guild;
         this.guildChannel = guildChannel;
 
-        jda.addEventListener(new Listener(this));
+        Main.getJda().addEventListener(new Listener(this));
 
-        var thread = new Thread(this);
-
+        thread = new Thread(this);
         thread.setDaemon(true);
         thread.start();
     }

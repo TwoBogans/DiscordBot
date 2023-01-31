@@ -33,12 +33,7 @@ public class LiveChatManager {
             if (guild != null) {
                 var channel = guild.getTextChannelById(textChannelId);
                 if (channel != null) {
-                    var newListener = new LiveChatListener(guild, channel, jda);
-                    listenerMap.put(guild.getIdLong(), newListener);
-                    System.out.printf("Added to listener map %s %s",
-                            guild.getIdLong(),
-                            newListener
-                    );
+                    registerNewLiveChat(guild, channel, false);
                 }
             }
         });
@@ -53,10 +48,40 @@ public class LiveChatManager {
         System.out.println(gson.toJson(guildMap));
     }
 
-    public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel) {
-        var newListener = new LiveChatListener(guild, textChannel, jda);
+    public void removeLiveChat(@NonNull LiveChatListener listener) {
+        removeLiveChat(listener.getGuild(), listener.getGuildChannel());
+    }
+
+    public void removeLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel) {
+        var listener = listenerMap.get(guild.getIdLong());
+        var thread = listener.getThread();
+
+        guildMap.remove(guild.getIdLong(), textChannel.getIdLong());
+        listenerMap.remove(guild.getIdLong());
+        jda.removeEventListener(listener);
+        thread.stop();
+
+        System.out.printf("Remove Live Chat: %s %s", guild.getName(), textChannel.getName());
+    }
+
+    public void registerNewLiveChat(@NonNull Guild guild, @NonNull TextChannel textChannel, boolean save) {
+        if (listenerMap.containsKey(guild.getIdLong())) {
+            removeLiveChat(listenerMap.get(guild.getIdLong()));
+        }
+
+        var newListener = new LiveChatListener(guild, textChannel);
+
         guildMap.put(newListener.getGuild().getIdLong(), newListener.getGuildChannel().getIdLong());
-        saveLiveChats();
+        listenerMap.put(newListener.getGuild().getIdLong(), newListener);
+
+        System.out.printf("Added to listener map %s %s",
+                guild.getIdLong(),
+                newListener
+        );
+
+        if (save) {
+            saveLiveChats();
+        }
     }
 
     @SneakyThrows

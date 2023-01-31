@@ -14,6 +14,7 @@ public class LiveChatCommand extends Command {
         setGuildOnly(true);
         setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
         addOption(OptionType.CHANNEL, "channel", "Channel For Live Chat", true);
+        addOption(OptionType.BOOLEAN, "remove", "Remove Live Chat Integration", false);
     }
 
     @Override
@@ -22,11 +23,23 @@ public class LiveChatCommand extends Command {
         if (option != null) {
             var channel = option.getAsChannel();
             var manager = Main.getLiveChatManager();
+            var remove = event.getOption("remove");
+
+            if (remove != null && remove.getAsBoolean()) {
+                var text = channel.asTextChannel();
+
+                manager.removeLiveChat(channel.getGuild(), text);
+
+                event.reply("Successfully removed live chat channel.")
+                        .setEphemeral(true)
+                        .queue();
+                return;
+            }
 
             try {
                 var text = channel.asTextChannel();
 
-                manager.registerNewLiveChat(channel.getGuild(), text);
+                manager.registerNewLiveChat(channel.getGuild(), text, true);
 
                 event.reply("Successfully registered new live chat channel! %s".formatted(text.getAsMention()))
                         .setEphemeral(true)
