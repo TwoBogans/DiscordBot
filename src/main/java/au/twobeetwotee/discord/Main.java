@@ -57,14 +57,15 @@ public class Main {
                     .build()
                     .awaitReady();
 
+        // Global Commands
         commandManager = new CommandManager();
-
         jda.updateCommands().addCommands(commandManager.getCommands()
                     .stream()
                     .filter(command -> command.getCategory() != Command.Category.MAIN)
                     .collect(Collectors.toList()))
                     .queue();
 
+        // Main Guild Commands
         var mainGuild = jda.getGuildById(config.getMainGuild());
         if (mainGuild != null) {
             mainGuild.updateCommands().addCommands(commandManager.getCommands()
@@ -74,14 +75,15 @@ public class Main {
                     .queue();
         }
 
+        // Listeners
         jda.addEventListener(new MessageListener(), new GuildJoinListener());
 
         // Update Nickname
-        // TODO Fix?
         jda.getGuilds().forEach(guild -> guild.retrieveMember(Main.getJda().getSelfUser())
                     .queue(member -> guild.modifyNickname(member, "Australian Hausemaster")
                     .queue()));
 
+        // Live Chat
         liveChatManager = new LiveChatManager();
     }
 
