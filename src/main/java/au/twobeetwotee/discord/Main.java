@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.io.IOException;
@@ -34,6 +35,8 @@ public class Main {
     private static Gson gson;
     @Getter
     private static Config config;
+    @Getter
+    private static Guild mainGuild;
     @Getter
     private static CommandManager commandManager;
     @Getter
@@ -57,23 +60,26 @@ public class Main {
                     .build()
                     .awaitReady();
 
-        // Global Commands
+        // Main Guild
+        mainGuild = jda.getGuildById(config.getMainGuild());
+
+        if (mainGuild == null)
+            throw new InterruptedException("Main Guild Not Found! Config Value: %s".formatted(config.getMainGuild()));
+
+        // Commands
         commandManager = new CommandManager();
+
         jda.updateCommands().addCommands(commandManager.getCommands()
                     .stream()
                     .filter(command -> command.getCategory() != Command.Category.MAIN)
                     .collect(Collectors.toList()))
                     .queue();
 
-        // Main Guild Commands
-        var mainGuild = jda.getGuildById(config.getMainGuild());
-        if (mainGuild != null) {
-            mainGuild.updateCommands().addCommands(commandManager.getCommands()
+        mainGuild.updateCommands().addCommands(commandManager.getCommands()
                     .stream()
                     .filter(command -> command.getCategory() == Command.Category.MAIN)
                     .collect(Collectors.toList()))
                     .queue();
-        }
 
         // Listeners
         jda.addEventListener(new MessageListener(), new GuildJoinListener());
