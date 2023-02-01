@@ -104,8 +104,12 @@ public class LiveChatListener {
                             embed = embed.setImage(imageUrl);
                         }
 
-                        listener.guildChannel.sendMessageEmbeds(embed.build()).queue();
-                        listener.latestHash = entry.getKey();
+                        var channel = listener.guildChannel;
+
+                        if (channel != null) {
+                            channel.sendMessageEmbeds(embed.build()).queue();
+                            listener.latestHash = entry.getKey();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
