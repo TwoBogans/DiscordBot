@@ -28,8 +28,7 @@ public class SeenCommand extends Command {
             final var embed = Util.defaultBuilder("Seen Player")
                     .setThumbnail(Constants.MINOTAR_BUST.formatted(api.getUuid()))
                     .addField("Minecraft IGN", api.getName(), false)
-                    .addField("Last Seen", api.getName(), false)
-                    .setImage(Constants.SERVER_URL)
+                    .addField("Last Seen", formatLastPlayed(api.getLastPlayed()), false)
                     .build();
 
             event.replyEmbeds(embed)
@@ -43,7 +42,7 @@ public class SeenCommand extends Command {
     }
 
     private String formatLastPlayed(long lastPlayed) {
-        return "";
+        return String.valueOf(lastPlayed);
     }
 
     private UUID getUUIDFromOption(SlashCommandInteractionEvent event) throws IOException {
@@ -62,6 +61,7 @@ public class SeenCommand extends Command {
 
         if (option3 != null) {
             var user = option3.getAsUser();
+            if (!Util.isUserVerified(user)) throw new IOException("User must be linked with `2b2t.au` for this!");
             var api = Main.getApi().getDiscordUUID(user.getIdLong());
             return UUID.fromString(api.getUuid());
         }
